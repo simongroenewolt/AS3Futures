@@ -227,15 +227,17 @@ The keen of eye will notice that the Future returned from the load function is n
 
 	public function applicationSetup():void
 	{
-		load('config.xml')
-			.onComplete(function (rawXML:String):void {
-				const config:XML = new XML(rawXML)
+		sentinal.watch(
+			load('config.xml')
+				.onComplete(function (rawXML:String):void {
+					const config:XML = new XML(rawXML)
 			
-				// do stuff with the config info ...
-			})
-			.onCancel(function (e:ErrorEvent):void {
-				// log the error or do something more constructive
-			})
+					// do stuff with the config info ...
+				})
+				.onCancel(function (e:ErrorEvent):void {
+					// log the error or do something more constructive
+				})
+		)
 	}
 
 Watch this space for more async goodness...
