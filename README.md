@@ -29,7 +29,7 @@ These criticism's motivated Robert to make the [AS3Signals](https://github.com/r
 		}
 	}
 
-Nothing crazy here, come calling code might look like this:
+Nothing crazy here, some calling code might look like this:
 
 	public function doSomeServerShizzle(server:ServerClient):void
 	{		
@@ -91,7 +91,7 @@ The calling code now becomes:
 	public function doSomeServerShizzle(server:ServerClient):void
 	{	
 		server.logIn('brian', 'wentelteefjes')
-			.onCompete(function (playerData:XML):void {
+			.onComplete(function (playerData:XML):void {
 				trace('nice, we're in!')
 			})
 			.onCancel(function (reason:String):void {

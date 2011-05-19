@@ -17,6 +17,9 @@ bin-release/*
 .FlexUnitSettings
 .project
 
+#rake
+Gemfile.lock
+
 #windows
 
 Icon
