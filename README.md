@@ -45,7 +45,11 @@ Nothing crazy here, some calling code might look like this:
 		server.logIn('brian', 'wentelteefjes')
 	}
 
-Ok great, but look at the usage of this ServerClient and more specifically the signals. If I drew out the usage of the userLogInSucceeded Signal over time, we would see that the ServerClient object lives, let's say for the life time of the application. But the userLogInSucceeded is only dispatching data when the logIn method is called, and other than that it's silent. Also I'm not really sure under what conditions the userLogInSucceeded Signal will dispatch. And even more, I write a line of code what listens to a signal at the top of a class, and only call the logIn method at the bottom, leaving a gulf of source code between two highly related pieces of code. 
+Ok great, but look at the usage of this ServerClient and more specifically the signals. If I charted out the usage of the userLogInSucceeded Signal over time, we would see that the ServerClient object lives, let's say for the life time of the application. But the userLogInSucceeded Signal is only dispatching data when the logIn method is called, and other than that it's silent. This means I have a Signal object mostly idle. 
+
+Also looking at the Signal does not tell me under what conditions the userLogInSucceeded Signal will dispatch. And even more, I could write a line of code what listens to a signal at the top of a class, and call the logIn method at the bottom, leaving a gulf of source code between two highly related pieces of code. I asked myself why do I need Signals at the top of the class at all? Why not return a Signal from the logIn method?
+
+But then the logIn method can both succeed or fail, so I would have to pass back two signals. Hmmmmm...
 
 What I propose is that the ServerClient is modified so that the logIn and logOut methods return a Future. 
 
@@ -239,5 +243,7 @@ The keen of eye will notice that the Future returned from the load function is n
 				})
 		)
 	}
+	
+A Future can also be synced with more Futures. This is done by calling the waitOnCritical method. But more on this later...
 
 Watch this space for more async goodness...
