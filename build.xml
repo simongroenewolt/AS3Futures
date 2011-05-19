@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<project name="AS3Futures" basedir="." default="swc">
+	<property environment="env." />
+	
+	<property name="FLEX_HOME" location="${env.FLEX_HOME}" />
+	
+	<property name="bin.dir" value="${basedir}/bin" />
+	<property name="version" value="0.1" />
+	<property name="project.name.versioned" value="${ant.project.name}-${version}" />
+	<property name="src.dir" value="${basedir}/src/org" />
+	
+	<target name="clean">
+		<delete includeemptydirs="true" failonerror="false">
+			<fileset dir="${bin.dir}" defaultexcludes="false">
+				<include name="**/*" />
+			</fileset>
+		</delete>
+	</target>
+	
+	<target name="swc">
+		<java jar="${FLEX_HOME}/lib/compc.jar" dir="${FLEX_HOME}/frameworks"
+			fork="true" failonerror="true">
+			<arg value="-output=${bin.dir}/${project.name.versioned}.swc" />
+			<arg value="-include-sources=${src.dir}" />
+			<arg value="-static-link-runtime-shared-libraries=false" />
+			<arg value="-verbose-stacktraces=true" />
+			<arg value="-headless-server=true" />
+		</java>
+	</target>
+</project>

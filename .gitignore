@@ -5,6 +5,7 @@ docs/*
 obj/*
 dist/*
 report/*
+lib/*
 
 # flex builder
 html-template/*
