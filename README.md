@@ -1,4 +1,4 @@
-AS3 Futures is an effort to make a small set of classes to help handle asynchronous communication in AS3. Native Flash Events can of course be used for this, but they have their problems, many of which are discussed by Robert Penner:
+AS3 Futures is an effort to make a small set of classes to help handle asynchronous calls in AS3. Native Flash Events can of course be used for this, but they have their problems, many of which are discussed by Robert Penner:
 
 * [My Critique of AS3 Events - Part 1](http://robertpenner.com/flashblog/2009/08/my-critique-of-as3-events-part-1.html)
 * [AS3 Events - 7 things I've learned from community](http://robertpenner.com/flashblog/2009/09/as3-events-7-things-ive-learned-from.html)
@@ -60,7 +60,7 @@ What I propose is that the ServerClient is modified so that the logIn and logOut
 		... and some other bits and pieces
 	}
 
-By returning a Future from a method I am saying that this method perform an asynchronous operation. And yes we have just lost static typing, but lets not get into a heated hand waving, foot stomping debate about it.
+By returning a Future from a method I am saying that this method performs an asynchronous operation. And yes we have just lost static typing, but lets not get into a heated hand waving, foot stomping debate about it.
 
 	public class ServerClient
 	{
