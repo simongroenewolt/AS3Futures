@@ -1,29 +1,15 @@
 package org.osflash.futures
 {
-	import org.osflash.signals.ISignalBinding;
-	import org.osflash.signals.SignalBinding;
-
 	/**
 	 * The base class of all Future implementations.  
 	 */	
 	public class BaseFuture implements Future
 	{
-		/**
-		 * Holds signal bindings so that they can be easily cleaned up  
-		 */		
-		protected const 
-			bindings:Array = []
-			
 		protected var
 			isDead:Boolean = false
 			
 		public function BaseFuture()
 		{
-		}
-		
-		protected function addBinding(binding:ISignalBinding):void
-		{
-			bindings.push(binding)
 		}
 		
 		protected function checkDeadness():void
@@ -56,12 +42,6 @@ package org.osflash.futures
 		public function dispose():void 
 		{
 			isDead = true
-			
-			// remove all listenning functions
-			for each (var binding:SignalBinding in bindings)
-			{
-				binding.remove()
-			}
 		}
 		
 		public function waitOnCritical(...otherFutures):Future

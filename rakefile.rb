@@ -29,7 +29,6 @@ require 'asunit4'
 # Compile the debug swf
 mxmlc "bin/AS3Futures-debug.swf" do |t|
   t.input = "src/AS3Futures.as"
-  t.library_path << 'lib/as3-signals-v0.8.swc'
   t.debug = true
 end
 
@@ -58,7 +57,6 @@ compc "bin/AS3Futures.swc" do |t|
   t.input_class = "AS3Futures"
   t.source_path << 'src'
   t.include_sources << 'src/org'
-  t.external_library_path << 'lib'
 end
 
 desc "Compile the SWC file"

@@ -1,9 +1,5 @@
 package org.osflash.futures
 {
-	import flash.utils.Dictionary;
-	
-	import org.osflash.signals.Signal;
-
 	public class SyncedFuture extends TypedFuture implements Future
 	{
 		protected var
