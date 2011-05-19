@@ -4,7 +4,9 @@ AS3 Futures is an effort to make a small set of classes to help handle asynchron
 * [AS3 Events - 7 things I've learned from community](http://robertpenner.com/flashblog/2009/09/as3-events-7-things-ive-learned-from.html)
 * [My Critique of AS3 Events - Part 2](http://robertpenner.com/flashblog/2009/09/my-critique-of-as3-events-part-2.html)
 
-These criticism's motivated Robert to make the [AS3Signals](https://github.com/robertpenner/as3-signals/) lib itself based on signal/slots from the Qt framework. I find Signals to be a big improvement over native Events but let me explain why I made an interface called Future:
+These criticism's motivated Robert to make the [AS3Signals](https://github.com/robertpenner/as3-signals/) lib, itself based on signal/slots from the Qt framework. I find Signals to be a big improvement over native Events but let me explain why I made a little interface called Future...
+
+Lets make a ServerClient:
 
 	public class ServerClient
 	{

@@ -1,9 +1,5 @@
 package org.osflash.futures
-{
-	import nl.ijsfontein.kernel.collections.ListMutable;
-	import nl.ijsfontein.kernel.collections.lstMuta;
-	import nl.ijsfontein.kernel.functional.ignoreArgs;
-	
+{	
 	/**
 	 * Use this class to hold a reference to single Future so that the garbage collector doesn't get it's filth hands on it.
 	 * Since this Sentinal refers to a single future, and existing Future references will be disposed of.

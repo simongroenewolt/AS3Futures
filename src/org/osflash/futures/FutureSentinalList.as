@@ -1,22 +1,21 @@
 package org.osflash.futures
 {
-	import nl.ijsfontein.kernel.collections.ListMutable;
-	import nl.ijsfontein.kernel.collections.lstMuta;
-
+	import flash.utils.Dictionary;
+	
 	/**
 	 * Use this class to hold reference to Futures so that the garbage collector doesn't get it's filth hands on them.
 	 * This Sentinal manages a list of Futures and only disposes of them when the are satisfied. 
 	 */	
 	public class FutureSentinalList
 	{
-		protected const futures:ListMutable = lstMuta()
+		protected const futures:Dictionary = new Dictionary()
 		
 		public function watch(futureToWatch:Future):Future
 		{
-			if (futures.contains(futureToWatch))
+			if (futureToWatch in futures)
 				throw new Error('Future is already being watched')
 				
-			futures.add(futureToWatch)
+			futures[futureToWatch] = futureToWatch
 				
 			const dispose:Function = disposeFuture(futureToWatch) 
 			futureToWatch.onCompleted(dispose)
@@ -41,7 +40,7 @@ package org.osflash.futures
 		protected function disposeFuture(future:Future):Function
 		{
 			return function (...args):void {
-				futures.removeFirst(future)
+				delete futures[future]
 			}
 		}
 	}

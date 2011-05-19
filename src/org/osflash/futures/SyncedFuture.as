@@ -2,13 +2,9 @@ package org.osflash.futures
 {
 	import flash.utils.Dictionary;
 	
-	import nl.ijsfontein.kernel.application.Disposable;
-	import nl.ijsfontein.kernel.collections.arrf;
-	import nl.ijsfontein.kernel.functional.partial;
-	
 	import org.osflash.signals.Signal;
 
-	public class SyncedFuture extends TypedFuture implements Future, Disposable
+	public class SyncedFuture extends TypedFuture implements Future
 	{
 		protected var
 			futuresToSync:Array = []
@@ -29,7 +25,7 @@ package org.osflash.futures
 			
 			// if any of the sub-futures are cancelled then cancel this future and dispose of them all
 			// attach complete listener to each future
-			futuresToSync.forEach(arrf(function (blob:Object):void {
+			futuresToSync.forEach(function (blob:Object, index:int, arr:Array):void {
 				const future:Future = blob.future
 				
 				future.onCompleted(function (...args):void {
@@ -63,14 +59,15 @@ package org.osflash.futures
 				future.onCancelled(function (...args):void {
 					cancel.apply(null, args)
 				})
-			}))
+			})
 		}
 		
 		override public function dispose():void
 		{
-			futuresToSync.forEach(arrf(function (blob:Object):void {
+			for each (var blob:Object in futuresToSync)
+			{
 				blob.future.dispose()
-			}))
+			}
 		}
 		
 		public function sync(...otherFutures):Future

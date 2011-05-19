@@ -56,6 +56,8 @@ flashplayer :test => "bin/AS3Futures-test.swf"
 compc "bin/AS3Futures.swc" do |t|
   t.input_class = "AS3Futures"
   t.source_path << 'src'
+  t.include_sources << 'src/org'
+  t.external_library_path << 'lib'
 end
 
 desc "Compile the SWC file"
@@ -72,5 +74,5 @@ end
 
 ##############################
 # DEFAULT
-task :default => :run
+task :default => :swc
 
