@@ -105,3 +105,5 @@ The difference here is that I am giving back a unique object representing my log
 * the request is not satisfied/cancelled
 
 Either way the Futures raison d'etre is no more, and it is disposed of. Disposal means that any listening functions are detached from the Future.
+
+Watch this space for more async goodness...
