@@ -29,6 +29,7 @@ require 'asunit4'
 # Compile the debug swf
 mxmlc "bin/AS3Futures-debug.swf" do |t|
   t.input = "src/AS3Futures.as"
+  t.library_path << 'lib/as3-signals-v0.8.swc'
   t.debug = true
 end
 

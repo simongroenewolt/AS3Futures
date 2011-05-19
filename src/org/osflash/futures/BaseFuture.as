@@ -14,6 +14,9 @@ package org.osflash.futures
 		protected const 
 			bindings:Array = []
 			
+		protected var
+			isDead:Boolean = false
+			
 		public function BaseFuture()
 		{
 		}
@@ -23,28 +26,37 @@ package org.osflash.futures
 			bindings.push(binding)
 		}
 		
+		protected function checkDeadness():void
+		{
+			if (isDead) throw new Error('future is past, move on, stop trying to relive it')
+		}
+		
 		public function onCompleted(f:Function):Future
 		{
+			checkDeadness()
 			return this
 		}
 		
 		public function complete(...args):void
 		{
-			
+			checkDeadness()
 		}
 		
 		public function onCancelled(f:Function):Future
 		{
+			checkDeadness()
 			return this
 		}
 		
 		public function cancel(...args):void
 		{
-			
+			checkDeadness()
 		}
 		
 		public function dispose():void 
 		{
+			isDead = true
+			
 			// remove all listenning functions
 			for each (var binding:SignalBinding in bindings)
 			{
@@ -54,6 +66,7 @@ package org.osflash.futures
 		
 		public function waitOnCritical(...otherFutures):Future
 		{
+			checkDeadness()
 			return new SyncedFuture([this].concat(otherFutures))
 		}
 	}

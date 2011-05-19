@@ -12,7 +12,7 @@ package org.osflash.futures
 		{
 			if (future != null)
 			{
-				disposeFuture()
+				cancelFuture()
 				future = futureToWatch
 			}
 			
@@ -23,9 +23,15 @@ package org.osflash.futures
 			return futureToWatch
 		}
 		
+		protected function cancelFuture(...args):void
+		{
+			future.cancel()
+			disposeFuture()
+		}
+		
 		protected function disposeFuture(...args):void
 		{
-			future.dispose() 
+			future.dispose()
 			future = null
 		}
 	}
