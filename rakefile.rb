@@ -43,7 +43,7 @@ library :asunit4
 # Compile the test swf
 mxmlc "bin/AS3Futures-test.swf" => :asunit4 do |t|
   t.input = "src/AS3FuturesRunner.as"
-  t.source_path << 'test'
+  t.source_path << 'tests'
   t.debug = true
 end
 

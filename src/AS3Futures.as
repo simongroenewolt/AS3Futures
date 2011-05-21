@@ -1,23 +1,26 @@
 package {
     import flash.display.Sprite;
     
+    import org.osflash.futures.Future;
     import org.osflash.futures.TypedFuture;
 
     public class AS3Futures extends Sprite {
 
         public function AS3Futures() {
-			const future:TypedFuture = new TypedFuture()
 			
-			future.onCompleted(function (message:String):void {
-				trace('0:', message)
-			})
+			const futureA:Future = new TypedFuture()
+			const futureB:Future = new TypedFuture()
+			const futureSync:Future = futureA.waitOnCritical(futureB)
+				.onCompleted(function (messageA:String, messageB:String):void {
+					trace('onComplete:', messageA, messageB)
+				})
+				.onCancelled(function (message:String):void {
+					trace('onCancel:', message)
+				})
 				
-			future.onCancelled(function (message:String):void {
-				trace('1:', message)
-			})
-				
-//			future.complete('moo')
-			future.cancel('moo')
+			futureA.complete('A')
+			futureB.cancel('B')
+//			future.cancel('moo')
         }
     }
 }

@@ -1,7 +1,11 @@
 package {
     import asunit.core.TextCore;
+    
     import flash.display.MovieClip;
+    
+    import org.osflash.futures.AllTests;
 
+	[SWF(width="1024", height="640", backgroundColor="#000000", frameRate="61")]
     public class AS3FuturesRunner extends MovieClip {
         
         private var core:TextCore;
