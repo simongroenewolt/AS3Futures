@@ -12,6 +12,17 @@ package org.osflash.futures
 		{
 		}
 		
+		protected function assertListenerArgumentLength(listener:Function, length:uint):void
+		{
+			if (listener.length < length)
+			{
+				const argumentString:String = (listener.length == 1) ? 'argument' : 'arguments';
+				
+				throw new ArgumentError('Listener has '+listener.length+' '+argumentString+' but it needs at least '+
+					length+' to match the given types.');
+			}
+		}
+		
 		protected function checkDeadness():void
 		{
 			if (isDead) throw new Error('future is past, move on, stop trying to relive it')

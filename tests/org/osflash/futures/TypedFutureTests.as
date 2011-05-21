@@ -1,23 +1,56 @@
 package org.osflash.futures 
 {
+	import asunit.framework.IAsync;
+
 	public class TypedFutureTests 
 	{
-		[Before]
-		public function setup():void 
-		{
-			
-		}
+		[Inject]
+		public var async:IAsync
 		
-		[After]
-		public function tearDown():void
+		[Test]
+		public function shouldCompleteWithTyping():void
 		{
-			
+			const future:Future = new TypedFuture([String, Array])
+				
+			future.onCompleted(async.add(function (a:String, b:Array):void {
+				
+			}))
+				
+			future.complete('arg', [1, 2])
 		}
 		
 		[Test]
-		public function test():void
+		public function shouldCompleteWithoutTyping():void
 		{
+			const future:Future = new TypedFuture()
 			
+			future.onCompleted(async.add(function (a:String, b:Array):void {
+				
+			}))
+			
+			future.complete('arg', [1, 2])
+		}
+		
+		[Test(expects="ArgumentError")]
+		public function shouldFailDueToBadListenerSigniture():void
+		{
+			const future:Future = new TypedFuture([String, Array])
+			
+			future.onCompleted(function (a:String):void {
+				
+			})
+		}
+		
+		[Test(expects="ArgumentError")]
+		public function shouldFailDueToInvalidCompleteArguments():void
+		{
+			const future:Future = new TypedFuture([String, Array])
+			
+			future.onCompleted(function (a:String, b:Array):void {
+				
+			})
+				
+			future.complete('arg')
 		}
 	}
 }

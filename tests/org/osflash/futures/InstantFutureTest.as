@@ -33,6 +33,28 @@ package org.osflash.futures
 			future.onCancelled(failCallback)
 		}
 		
+		[Test(expects="ArgumentError")]
+		public function testSuccessWrongListenerSigniture():void
+		{
+			const future:Future = new InstantFutureSuccess('arg', [1 ,2])
+			
+			future.onCompleted(function (a:String):void {
+			})
+			
+			future.onCancelled(failCallback)
+		}
+		
+		
+		[Test(expects="ArgumentError")]
+		public function testFailWrongListenerSigniture():void
+		{
+			const future:Future = new InstantFutureFail('arg', [1 ,2])
+			
+			future.onCompleted(failCallback)
+			future.onCancelled(function (a:String):void {
+			})
+		}
+		
 		[Test]
 		public function testFailNoArgs():void
 		{

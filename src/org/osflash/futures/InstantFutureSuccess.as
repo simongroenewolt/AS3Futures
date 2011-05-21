@@ -11,6 +11,7 @@ package org.osflash.futures
 		
 		override public function onCompleted(f:Function):Future
 		{
+			assertListenerArgumentLength(f, args.length)
 			f.apply(null, args)
 			return this;
 		}
