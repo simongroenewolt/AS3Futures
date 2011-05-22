@@ -4,7 +4,7 @@ package org.osflash.futures
 	 * Use this class to hold a reference to single Future so that the garbage collector doesn't get it's filth hands on it.
 	 * Since this Sentinal refers to a single future, and existing Future references will be disposed of.
 	 */	
-	public class FutureSentinalSingle
+	public class FutureSentinelSingle
 	{
 		protected var future:Future
 		

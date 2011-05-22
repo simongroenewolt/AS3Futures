@@ -6,7 +6,7 @@ package org.osflash.futures
 	 * Use this class to hold reference to Futures so that the garbage collector doesn't get it's filth hands on them.
 	 * This Sentinal manages a list of Futures and only disposes of them when the are satisfied. 
 	 */	
-	public class FutureSentinalList
+	public class FutureSentinelList
 	{
 		protected const futures:Dictionary = new Dictionary()
 		
