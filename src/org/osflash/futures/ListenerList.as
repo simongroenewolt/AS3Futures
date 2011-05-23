@@ -1,11 +1,11 @@
 package org.osflash.futures
 {
-	public class CallbackList
+	public class ListenerList
 	{
 		protected const functionList:Array = []
 		protected var typeList:Array = []
 		
-		public function CallbackList(types:Array=null)
+		public function ListenerList(types:Array=null)
 		{
 			if (types) 
 				this.typeList = types

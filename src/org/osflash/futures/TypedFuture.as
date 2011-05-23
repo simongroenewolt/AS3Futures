@@ -3,16 +3,16 @@ package org.osflash.futures
 	public class TypedFuture extends BaseFuture implements FutureProgressable
 	{
 		protected const
-			_onProgress:CallbackList = new CallbackList([Number])
+			_onProgress:ListenerList = new ListenerList([Number])
 			
 		protected var
-			_onCancel:CallbackList = new CallbackList(),
-			_onComplete:CallbackList = new CallbackList()
+			_onCancel:ListenerList = new ListenerList(),
+			_onComplete:ListenerList = new ListenerList()
 		
 		public function TypedFuture(completeTypes:Array=null, cancelTypes:Array=null)
 		{	
-			if (completeTypes)	_onComplete = new CallbackList(completeTypes)
-			if (cancelTypes)	_onCancel = new CallbackList(cancelTypes)
+			if (completeTypes)	_onComplete = new ListenerList(completeTypes)
+			if (cancelTypes)	_onCancel = new ListenerList(cancelTypes)
 		}
 		
 		override public function dispose():void
