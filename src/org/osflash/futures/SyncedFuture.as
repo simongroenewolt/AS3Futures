@@ -1,10 +1,14 @@
 package org.osflash.futures
 {
+	/**
+	 * When two or more Futures needs to synchonise in time this is the class that manages that 
+	 */	
 	public class SyncedFuture extends TypedFuture implements Future
 	{
 		protected var
-			futuresToSync:Array = []
-		
+			futuresToSync:Array = [],
+			isCancelled:Boolean = false
+				
 		public function SyncedFuture(syncThese:Array)
 		{
 			var i:int=0
@@ -21,10 +25,9 @@ package org.osflash.futures
 			
 			// if any of the sub-futures are cancelled then cancel this future and dispose of them all
 			// attach complete listener to each future
-			futuresToSync.forEach(function (blob:Object, index:int, arr:Array):void {
-				const future:Future = blob.future
+			forEachChildFuture(function (childFuture:Future):void {
 				
-				future.onCompleted(function (...args):void {
+				childFuture.onCompleted(function (...args):void {
 					completesReceived++
 					
 					// find the future in the list
@@ -32,7 +35,8 @@ package org.osflash.futures
 					{
 						var blob:Object = futuresToSync[i]
 						
-						if (blob.future == future)
+						// associate it with the arguements 
+						if (blob.future == childFuture)
 						{
 							blob.args = args
 						}
@@ -43,26 +47,65 @@ package org.osflash.futures
 						// make one array from all the arguments received, in the order the futures were registered in 
 						var argsComposite:Array = []
 						
-						for (i=0; i<futuresToSync.length; ++i)
-						{
-							argsComposite = argsComposite.concat(futuresToSync[i].args)
-						}
+						forEachChildFuture(function (cf:Future, argsSaved:Array):void {
+							argsComposite = argsComposite.concat(argsSaved)
+						})
 						
 						// collect the args from each
 						complete.apply(null, argsComposite)
 					}
 				})
-				future.onCancelled(function (...args):void {
-					cancel.apply(null, args)
+				
+				childFuture.onCancelled(function (...args):void {
+					cancelThis(childFuture, args)
 				})
 			})
+		}
+		
+		protected function cancelThis(futureThatCancelled:Future, args:Array):void
+		{
+			// old school boolean lock, a SyncedFuture should only be cancelled once
+			if (isCancelled == false)
+			{
+				isCancelled = true
+					
+				forEachChildFuture(function (childFuture:Future):void {
+					// only cancel a child future if it is not the child that just cancelled
+					if (childFuture != futureThatCancelled && childFuture.isPast == false)
+						childFuture.cancel.apply(null, args)
+				})
+			}
+		}
+		
+		protected function forEachChildFuture(f:Function):void 
+		{
+			var i:int
+			
+			// if function has one argument then pass in the future
+			if (f.length == 1)
+			{
+				for (i=0; i<futuresToSync.length; ++i)
+				{
+					const childFuture:Future = futuresToSync[i].future
+					f(childFuture)
+				}
+			}
+			// if function has two arguments then pass in the future and it's saved args
+			else if (f.length == 2)
+			{
+				for (i=0; i<futuresToSync.length; ++i)
+				{
+					f(futuresToSync[i].future, futuresToSync[i].args)
+				}
+			}
 		}
 		
 		override public function dispose():void
 		{
 			for each (var blob:Object in futuresToSync)
 			{
-				blob.future.dispose()
+				const future:Future = blob.future
+				future.dispose()
 			}
 		}
 		

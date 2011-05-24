@@ -8,6 +8,11 @@ package org.osflash.futures
 	public interface Future
 	{
 		/**
+		 * @return true if the Future has past due to it beiing completed or cancelled already 
+		 */ 
+		function get isPast():Boolean
+		
+		/**
 		 * @param f the function to call if the Future is satified as complete
 		 * @return the same Future object so method calls can be chained togeter
 		 */		

@@ -10,16 +10,22 @@ package {
 			
 			const futureA:Future = new TypedFuture()
 			const futureB:Future = new TypedFuture()
-			const futureSync:Future = futureA.waitOnCritical(futureB)
-				.onCompleted(function (messageA:String, messageB:String):void {
-					trace('onComplete:', messageA, messageB)
-				})
-				.onCancelled(function (message:String):void {
-					trace('onCancel:', message)
-				})
-				
-			futureA.complete('A')
-			futureB.cancel('B')
+			const futureAB:Future = futureA.waitOnCritical(futureB)
+			
+			futureA.cancel()
+			
+//			const futureA:Future = new TypedFuture()
+//			const futureB:Future = new TypedFuture()
+//			const futureSync:Future = futureA.waitOnCritical(futureB)
+//				.onCompleted(function (messageA:String, messageB:String):void {
+//					trace('onComplete:', messageA, messageB)
+//				})
+//				.onCancelled(function (message:String):void {
+//					trace('onCancel:', message)
+//				})
+//				
+//			futureA.complete('A')
+//			futureB.cancel('B')
 //			future.cancel('moo')
         }
     }

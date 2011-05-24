@@ -5,8 +5,11 @@ package org.osflash.futures
 	 */	
 	public class BaseFuture implements Future
 	{
+		/**
+		 * true if the Future is completed or cancelled, as in it is now something that exists in the past. 
+		 */		
 		protected var
-			isDead:Boolean = false
+			_isPast:Boolean = false
 			
 		public function BaseFuture()
 		{
@@ -23,41 +26,46 @@ package org.osflash.futures
 			}
 		}
 		
-		protected function checkDeadness():void
+		public function get isPast():Boolean
 		{
-			if (isDead) throw new Error('future is past, move on, stop trying to relive it')
+			return _isPast
+		}
+		
+		protected function assetFutureIsNotPast():void
+		{
+			if (_isPast) throw new Error('future is past, move on, stop trying to relive it')
 		}
 		
 		public function onCompleted(f:Function):Future
 		{
-			checkDeadness()
+			assetFutureIsNotPast()
 			return this
 		}
 		
 		public function complete(...args):void
 		{
-			checkDeadness()
+			assetFutureIsNotPast()
 		}
 		
 		public function onCancelled(f:Function):Future
 		{
-			checkDeadness()
+			assetFutureIsNotPast()
 			return this
 		}
 		
 		public function cancel(...args):void
 		{
-			checkDeadness()
+			assetFutureIsNotPast()
 		}
 		
 		public function dispose():void 
 		{
-			isDead = true
+			_isPast = true
 		}
 		
 		public function waitOnCritical(...otherFutures):Future
 		{
-			checkDeadness()
+			assetFutureIsNotPast()
 			return new SyncedFuture([this].concat(otherFutures))
 		}
 	}

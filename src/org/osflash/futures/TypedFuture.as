@@ -17,7 +17,7 @@ package org.osflash.futures
 		
 		override public function dispose():void
 		{
-			isDead = true
+			_isPast = true
 				
 			_onProgress.dispose()
 			_onComplete.dispose()
@@ -26,14 +26,14 @@ package org.osflash.futures
 		
 		public function onProgress(f:Function):FutureProgressable
 		{
-			checkDeadness()
+			assetFutureIsNotPast()
 			_onProgress.add(f)
 			return this
 		}
 			
 		public function progress(unit:Number):void
 		{
-			checkDeadness()
+			assetFutureIsNotPast()
 			_onProgress.dispatch([unit])
 		}
 		
