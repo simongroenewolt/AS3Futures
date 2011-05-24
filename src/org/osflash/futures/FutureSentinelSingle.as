@@ -31,7 +31,6 @@ package org.osflash.futures
 		
 		protected function disposeFuture(...args):void
 		{
-			future.dispose()
 			future = null
 		}
 	}
