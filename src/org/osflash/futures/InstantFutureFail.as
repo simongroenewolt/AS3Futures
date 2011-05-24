@@ -16,7 +16,7 @@ package org.osflash.futures
 		
 		override public function onCancelled(f:Function):Future
 		{
-			assertListenerArgumentLength(f, args.length)
+			assertListenerArguments(f, args.length)
 			f.apply(null, args)
 			return this;
 		}

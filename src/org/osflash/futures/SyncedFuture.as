@@ -74,6 +74,8 @@ package org.osflash.futures
 					if (childFuture != futureThatCancelled && childFuture.isPast == false)
 						childFuture.cancel.apply(null, args)
 				})
+				
+				cancel.apply(null, args)
 			}
 		}
 		

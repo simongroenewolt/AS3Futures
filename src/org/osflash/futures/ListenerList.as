@@ -10,21 +10,10 @@ package org.osflash.futures
 			if (types) 
 				this.typeList = types
 		}
-		
-		protected function assertListenerArgumentLength(listener:Function, length:uint):void
-		{
-			if (listener.length < length)
-			{
-				const argumentString:String = (listener.length == 1) ? 'argument' : 'arguments';
 				
-				throw new ArgumentError('Listener has '+listener.length+' '+argumentString+' but it needs at least '+
-					length+' to match the given types.');
-			}
-		}
-		
 		public function add(f:Function):void
 		{
-			assertListenerArgumentLength(f, typeList.length)
+			assertListenerArguments(f, typeList.length)
 			functionList.push(f)
 		}
 		
