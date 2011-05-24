@@ -9,15 +9,25 @@ package org.osflash.futures
 			this.args = args
 		}
 		
-		override public function onCompleted(f:Function):Future
-		{
-			return this;
-		}
-		
 		override public function onCancelled(f:Function):Future
 		{
-			assertListenerArguments(f, args.length)
-			f.apply(null, args)
+			assetFutureIsNotPast()
+			
+			if (_orElseCompleteWith)
+			{
+				const data:* = (_orElseCompleteWith is Function) 
+					? _orElseCompleteWith()
+					: _orElseCompleteWith
+				
+				complete(data)
+			}
+			else
+			{
+				assertListenerArguments(f, args.length)
+				f.apply(null, args)
+				dispose()
+			}
+			
 			return this;
 		}
 	}

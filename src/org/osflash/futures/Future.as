@@ -35,6 +35,14 @@ package org.osflash.futures
 		 * @param args the arguments to pass to all listening functions
 		 */			
 		function cancel(...args):void
+		
+		/**
+		 * Setting a value to orElse will guarantee that this future will always complete. 
+		 * The data supplied to orElse will be given to the complete listeners in the case of a cancelation.
+		 * @param funcOrObject an Object or the function to call that returns an Object 
+		 * @return the same Future object so method calls can be chained togeter 
+		 */			
+		function orElseCompleteWith(funcOrObject:Object):Future
 			
 		/**
 		 * Create a new compound Future that waits for both this Future and the other futures supplied

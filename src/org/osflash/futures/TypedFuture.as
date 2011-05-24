@@ -4,10 +4,6 @@ package org.osflash.futures
 	{
 		protected const
 			_onProgress:ListenerList = new ListenerList([Number])
-			
-		protected var
-			_onCancel:ListenerList = new ListenerList(),
-			_onComplete:ListenerList = new ListenerList()
 		
 		public function TypedFuture(completeTypes:Array=null, cancelTypes:Array=null)
 		{	
@@ -17,11 +13,8 @@ package org.osflash.futures
 		
 		override public function dispose():void
 		{
-			_isPast = true
-				
+			super.dispose()
 			_onProgress.dispose()
-			_onComplete.dispose()
-			_onCancel.dispose()
 		}
 		
 		public function onProgress(f:Function):FutureProgressable
@@ -35,34 +28,6 @@ package org.osflash.futures
 		{
 			assetFutureIsNotPast()
 			_onProgress.dispatch([unit])
-		}
-		
-		override public function onCompleted(f:Function):Future
-		{
-			super.onCompleted(f)
-			_onComplete.add(f)
-			return this
-		}
-		
-		override public function complete(...args):void
-		{
-			super.complete.apply(null, args)
-			_onComplete.dispatch(args)
-			dispose()
-		}
-		
-		override public function onCancelled(f:Function):Future 
-		{ 
-			super.onCancelled(f)
-			_onCancel.add(f)
-			return this 
-		}
-		
-		override public function cancel(...args):void
-		{
-			super.cancel.apply(null, args)
-			_onCancel.dispatch(args)
-			dispose()
 		}
 	}
 }
