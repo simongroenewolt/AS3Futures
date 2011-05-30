@@ -3,6 +3,7 @@ package {
     
     import org.osflash.futures.Future;
     import org.osflash.futures.TypedFuture;
+    import org.osflash.futures.waitOnCritical;
 
     public class AS3Futures extends Sprite {
 
