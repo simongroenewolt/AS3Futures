@@ -4,7 +4,7 @@ package org.osflash.futures
 	{
 		protected var args:Array
 		
-		public function InstantFutureSuccess(...args)
+		public function InstantFutureSuccess(args:Array)
 		{
 			this.args = args
 		}

@@ -16,7 +16,7 @@ package org.osflash.futures
 		[Test]
 		public function testSuccessNoArgs():void
 		{
-			const future:Future = new InstantFutureSuccess()
+			const future:Future = instantSuccess()
 				
 			future.onCompleted(async.add(emptyCallback))
 			future.onCancelled(failCallback)
@@ -25,7 +25,7 @@ package org.osflash.futures
 		[Test]
 		public function testSuccessArgs():void
 		{
-			const future:Future = new InstantFutureSuccess('arg', [1 ,2])
+			const future:Future = instantSuccess('arg', [1 ,2])
 			
 			future.onCompleted(async.add(function (a:String, b:Array):void {
 			}))
@@ -36,7 +36,7 @@ package org.osflash.futures
 		[Test(expects="ArgumentError")]
 		public function testSuccessWrongListenerSigniture():void
 		{
-			const future:Future = new InstantFutureSuccess('arg', [1 ,2])
+			const future:Future = instantSuccess('arg', [1 ,2])
 			
 			future.onCompleted(function (a:String):void {
 			})
@@ -48,7 +48,7 @@ package org.osflash.futures
 		[Test(expects="ArgumentError")]
 		public function testFailWrongListenerSigniture():void
 		{
-			const future:Future = new InstantFutureFail('arg', [1 ,2])
+			const future:Future = instantFail('arg', [1 ,2])
 			
 			future.onCompleted(failCallback)
 			future.onCancelled(function (a:String):void {
@@ -58,7 +58,7 @@ package org.osflash.futures
 		[Test]
 		public function testFailNoArgs():void
 		{
-			const future:Future = new InstantFutureFail()
+			const future:Future = instantFail()
 			
 			future.onCompleted(failCallback)
 			future.onCancelled(async.add(emptyCallback))
@@ -67,7 +67,7 @@ package org.osflash.futures
 		[Test]
 		public function testFailArgs():void
 		{
-			const future:Future = new InstantFutureFail('arg', [1, 2])
+			const future:Future = instantFail('arg', [1, 2])
 			
 			future.onCompleted(failCallback)
 			future.onCancelled(async.add(function (a:String, b:Array):void {

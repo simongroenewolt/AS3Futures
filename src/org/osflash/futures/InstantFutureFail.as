@@ -4,14 +4,14 @@ package org.osflash.futures
 	{
 		protected var args:Array
 		
-		public function InstantFutureFail(...args)
+		public function InstantFutureFail(args:Array)
 		{
 			this.args = args
 		}
 		
 		override public function onCancelled(f:Function):Future
 		{
-			assetFutureIsNotPast()
+			assetFutureIsNotPast(this)
 			
 			if (_orElseCompleteWith)
 			{

@@ -19,14 +19,14 @@ package org.osflash.futures
 		
 		public function onProgress(f:Function):FutureProgressable
 		{
-			assetFutureIsNotPast()
+			assetFutureIsNotPast(this)
 			_onProgress.add(f)
 			return this
 		}
 			
 		public function progress(unit:Number):void
 		{
-			assetFutureIsNotPast()
+			assetFutureIsNotPast(this)
 			_onProgress.dispatch([unit])
 		}
 	}

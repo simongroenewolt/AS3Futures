@@ -37,6 +37,24 @@ package org.osflash.futures
 		function cancel(...args):void
 		
 		/**
+		 * Chain futures together, where the first Future in the sequence returns what the last Future completes with
+		 * @param f a function with signiture:
+		 * <pre>
+		 * 	function (...args):Future
+		 * </pre>
+		 * 
+		 * @return a modified version of the current Future. The listeners from the other Future are merged into this 
+		 * 
+		 */			
+		function andThen(f:Function):Future
+			
+		/**
+		 * @param f
+		 * @return 
+		 */			
+		function orThen(f:Function):Future
+						
+		/**
 		 * Setting a value to orElse will guarantee that this future will always complete. 
 		 * The data supplied to orElse will be given to the complete listeners in the case of a cancelation.
 		 * @param funcOrObject an Object or the function to call that returns an Object 
