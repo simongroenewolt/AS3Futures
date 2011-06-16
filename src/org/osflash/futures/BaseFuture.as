@@ -39,8 +39,9 @@ package org.osflash.futures
 			if (future.isPast) throw new Error('future is past, move on, stop trying to relive it')
 		}
 		
-		protected function beforeComplete(f:Function):Future
+		public function beforeComplete(f:Function):Future
 		{
+			assetFutureIsNotPast(this)
 			_beforeComplete = f
 			return this
 		}
@@ -64,31 +65,34 @@ package org.osflash.futures
 			if (_andThen != null)
 			{
 				// get the next future in the sequence
-				nextCompleteFuture = _andThen.apply(null, args)
-					
-				nextCompleteFuture.beforeComplete(function (...args):void {
-					completeItern(args)
-				})
-					
-				nextCompleteFuture.beforeCancel(function (...args):void {
-					cancel(args)	
-				})
+				nextCompleteFuture = createProxyFuture(_andThen, args)
 			}
 			else
 			{
-				completeItern(args)
+				completeItern.apply(null, args)
 			}
 		}
 		
-		protected function completeItern(args:Array):void
+		public function createProxyFuture(createProxy:Function, args:Array):BaseFuture
+		{
+			const proxyFuture:BaseFuture = createProxy.apply(null, args)
+			
+			proxyFuture.beforeComplete(completeItern)
+			proxyFuture.beforeCancel(cancelItern)
+				
+			return proxyFuture
+		}
+		
+		protected function completeItern(...args):void
 		{
 			_beforeComplete.apply(null, args)
 			_onComplete.dispatch(args)
 			dispose()
 		}
 		
-		protected function beforeCancel(f:Function):Future
+		public function beforeCancel(f:Function):Future
 		{
+			assetFutureIsNotPast(this)
 			_beforeCancel = f
 			return this
 		}
@@ -104,13 +108,10 @@ package org.osflash.futures
 		{
 			assetFutureIsNotPast(this)
 			
-			if (_orElseCompleteWith)
+			if (_orThen != null)
 			{
-				const data:* = (_orElseCompleteWith is Function) 
-					? _orElseCompleteWith()
-					: _orElseCompleteWith
-				
-				complete(data)
+				// get the next future in the sequence
+				nextCancelFuture = createProxyFuture(_orThen, args)
 			}
 			else
 			{
@@ -128,6 +129,10 @@ package org.osflash.futures
 		public function andThen(f:Function):Future
 		{
 			assetFutureIsNotPast(this)
+			
+			if (nextCompleteFuture != null && !nextCompleteFuture.isPast)
+				throw new Error('An andThen Future is already active on this Future')
+				
 			_andThen = f
 			return this
 		}
@@ -143,7 +148,10 @@ package org.osflash.futures
 		{
 			andThen(function (...args):Future {
 				const mappedArgs:* = f.apply(null, args)
-				return instantSuccess.apply(null, mappedArgs)
+				if (mappedArgs is Array)
+					return instantSuccess.apply(null, mappedArgs)
+				else
+					return instantSuccess(mappedArgs)
 			})
 			return this
 		}
@@ -152,21 +160,30 @@ package org.osflash.futures
 		{
 			orThen(function (...args):Future {
 				const mappedArgs:* = f.apply(null, args)
-				return instantFail.apply(null, mappedArgs) 
+				if (mappedArgs is Array)
+					return instantFail.apply(null, mappedArgs)
+				else
+					return instantFail(mappedArgs) 
 			})
 			return this
 		}
 		
 		public function orElseCompleteWith(funcOrObject:Object):Future
 		{
-			assetFutureIsNotPast(this)
-			_orElseCompleteWith = funcOrObject
+			orThen(function (...args):Future {
+				
+				const data:* = (_orElseCompleteWith is Function) 
+					? _orElseCompleteWith.apply(null, args)
+					: _orElseCompleteWith
+				
+				return instantSuccess.apply(null, data) 
+			})
 			return this
 		}
 		
 		public function dispose():void 
 		{
-			assetFutureIsNotPast(this)
+//			assetFutureIsNotPast(this)
 			_isPast = true
 			_onComplete.dispose()
 			_onCancel.dispose()

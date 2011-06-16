@@ -25,6 +25,14 @@ package org.osflash.futures
 		function complete(...args):void
 			
 		/**
+		 * Map the arguments of the complete function to another form before they get passed to the listeners (onComplete) 
+		 * @param f function of the form: 
+		 * 	function (...args):*
+		 * @return if an array of values is returned, each array element is passed to the onComplete listeners as single arguments 
+		 */			
+		function mapComplete(f:Function):Future	
+			
+		/**
 		 * @param f 
 		 * @return the same Future object so method calls can be chained togeter 
 		 */			
@@ -36,6 +44,14 @@ package org.osflash.futures
 		 */			
 		function cancel(...args):void
 		
+		/**
+		 * Map the arguments of the cancel function to another form before they get passed to the listeners (onCancel) 
+		 * @param f function of the form: 
+		 * 	function (...args):*
+		 * @return if an array of values is returned, each array element is passed to the onCancel listeners as single arguments 
+		 */
+		function mapCancel(f:Function):Future
+			
 		/**
 		 * Chain futures together, where the first Future in the sequence returns what the last Future completes with
 		 * @param f a function with signiture:
