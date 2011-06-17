@@ -15,15 +15,17 @@ package {
 			const futureA:Future = instantSuccess(argA)
 			const futureB:Future = instantSuccess(argB)
 			
-			futureA
-				.andThen(function (resultA:String):Future {					
-					return futureB
-					.mapComplete(function (resultB:String):String {
-						return resultB + "mapped" 
-					})
-				})
-					
-			futureA.onCompleted(trace)
+//			futureA
+//				.mapComplete(function (resultA:String):String {
+//					return resultA + "mapped" 
+//				})
+//				.andThen(function (resultA:String):Future {
+//					trace('resultA:', resultA)
+//					return futureB
+//					
+//				})
+//					
+//			futureA.onCompleted(trace)
 				
 //			const argA:String = 'argA'
 //			const argB:String = 'argB'

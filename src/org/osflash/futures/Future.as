@@ -30,7 +30,7 @@ package org.osflash.futures
 		 * 	function (...args):*
 		 * @return if an array of values is returned, each array element is passed to the onComplete listeners as single arguments 
 		 */			
-		function mapComplete(f:Function):Future	
+		function mapComplete(funcOrObject:Object):Future	
 			
 		/**
 		 * @param f 
@@ -50,7 +50,7 @@ package org.osflash.futures
 		 * 	function (...args):*
 		 * @return if an array of values is returned, each array element is passed to the onCancel listeners as single arguments 
 		 */
-		function mapCancel(f:Function):Future
+		function mapCancel(funcOrObject:Object):Future
 			
 		/**
 		 * Chain futures together, where the first Future in the sequence returns what the last Future completes with

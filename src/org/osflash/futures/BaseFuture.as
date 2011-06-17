@@ -115,11 +115,11 @@ package org.osflash.futures
 			}
 			else
 			{
-				cancelItern(args)
+				cancelItern.apply(null, args)
 			}
 		}
 		
-		protected function cancelItern(args:Array):void
+		protected function cancelItern(...args):void
 		{
 			_beforeCancel.apply(null, args)
 			_onCancel.dispatch(args)
@@ -144,22 +144,30 @@ package org.osflash.futures
 			return this
 		}
 		
-		public function mapComplete(f:Function):Future
+		public function mapComplete(funcOrObject:Object):Future
 		{
 			andThen(function (...args):Future {
-				const mappedArgs:* = f.apply(null, args)
+				
+				const mappedArgs:* = (funcOrObject is Function) 
+				? funcOrObject.apply(null, args)
+				: funcOrObject
+				
 				if (mappedArgs is Array)
 					return instantSuccess.apply(null, mappedArgs)
 				else
-					return instantSuccess(mappedArgs)
+					return instantSuccess(mappedArgs) 
 			})
 			return this
 		}
 		
-		public function mapCancel(f:Function):Future
+		public function mapCancel(funcOrObject:Object):Future
 		{
 			orThen(function (...args):Future {
-				const mappedArgs:* = f.apply(null, args)
+				
+				const mappedArgs:* = (funcOrObject is Function) 
+					? funcOrObject.apply(null, args)
+					: funcOrObject
+				
 				if (mappedArgs is Array)
 					return instantFail.apply(null, mappedArgs)
 				else
@@ -172,11 +180,14 @@ package org.osflash.futures
 		{
 			orThen(function (...args):Future {
 				
-				const data:* = (_orElseCompleteWith is Function) 
-					? _orElseCompleteWith.apply(null, args)
-					: _orElseCompleteWith
+				const mappedArgs:* = (funcOrObject is Function) 
+					? funcOrObject.apply(null, args)
+					: funcOrObject
 				
-				return instantSuccess.apply(null, data) 
+				if (mappedArgs is Array)
+					return instantSuccess.apply(null, mappedArgs)
+				else
+					return instantSuccess(mappedArgs)
 			})
 			return this
 		}

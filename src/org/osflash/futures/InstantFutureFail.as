@@ -36,14 +36,6 @@ package org.osflash.futures
 					f.apply(null, args)
 				})
 			}
-			else if (_orElseCompleteWith)
-			{
-				const data:* = (_orElseCompleteWith is Function) 
-					? _orElseCompleteWith()
-					: _orElseCompleteWith
-				
-				complete(data)
-			}
 			else
 			{
 				f.apply(null, args)
