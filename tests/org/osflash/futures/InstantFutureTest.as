@@ -9,9 +9,52 @@ package org.osflash.futures
 		[Inject]
 		public var async:IAsync
 		
+		protected const
+			argASuccess:String = 'argASuccss',
+			argBSuccess:String = 'argBSuccess',
+			argCSuccess:String = 'argCSuccess',
+			argAFail:String = 'argAFail',
+			argBFail:String = 'argBFail',
+			argCFail:String = 'argCFail'
+			
+		protected var
+			futureASuccess:Future, 
+			futureBSuccess:Future,
+			futureCSuccess:Future,
+			futureAFail:Future, 
+			futureBFail:Future,
+			futureCFail:Future
+			
 		protected const 
-			emptyCallback:Function = function ():void {},
-			failCallback:Function = function ():void { fail() };
+			emptyCallback:Function = function (...args):void {},
+			failCallback:Function = function (...args):void { fail() };
+		
+		protected function buildFail(message:String):Function
+		{
+			return function (...args):void { fail(message) }
+		}
+			
+		[Before]
+		public function setup():void 
+		{
+			futureASuccess = instantSuccess(argASuccess)
+			futureBSuccess = instantSuccess(argBSuccess)
+			futureCSuccess = instantSuccess(argCSuccess)
+			futureAFail = instantFail(argAFail)
+			futureBFail = instantFail(argBFail)
+			futureCFail = instantFail(argCFail)
+		}
+			
+		[After]
+		public function dispose():void
+		{
+			futureASuccess.dispose()
+			futureBSuccess.dispose()
+			futureCSuccess.dispose()
+			futureAFail.dispose()
+			futureBFail.dispose()
+			futureCFail.dispose()
+		}
 		
 		[Test]
 		public function testSuccessNoArgs():void
@@ -47,14 +90,9 @@ package org.osflash.futures
 		[Test]
 		public function testSuccessAndThen_Map():void
 		{
-			const argA:String = 'argA'
-			const argB:String = 'argB'
-			const futureA:Future = instantSuccess(argA)
-			const futureB:Future = instantSuccess(argB)
-				
-			futureA
+			futureASuccess
 				.andThen(function (resultA:String):Future {					
-					return futureB
+					return futureBSuccess
 						.mapComplete(function (resultB:String):String {
 							return resultB + "mapped" 
 						})
@@ -65,122 +103,81 @@ package org.osflash.futures
 		[Test]
 		public function testSuccessAndThenDepthOne():void
 		{
-			const argA:String = 'argA'
-			const argB:String = 'argB'
-			const futureA:Future = instantSuccess(argA)
-			const futureB:Future = instantSuccess(argB)
-				
-			futureA
+			futureASuccess
 				.andThen(function (resultA:String):Future {
-					return futureB
+					return futureBSuccess
 				})
 					
-			futureA.onCompleted(async.add(function (result:String):void {
-				assertEquals(argB, result)
+			futureASuccess.onCompleted(async.add(function (result:String):void {
+				assertEquals(argBSuccess, result)
 			}))
 		}
 		
 		[Test]
 		public function testSuccessAndThenDepthTwo():void
 		{
-			const argA:String = 'argA'
-			const argB:String = 'argB'
-			const argC:String = 'argC'
-			const futureA:Future = instantSuccess(argA)
-			const futureB:Future = instantSuccess(argB)
-			const futureC:Future = instantSuccess(argC)
-			
-			futureA
+			futureASuccess
 				.andThen(function (resultA:String):Future {
-					return futureB.andThen(function (resultB:String):Future {
-						return futureC
+					return futureBSuccess.andThen(function (resultB:String):Future {
+						return futureCSuccess
 					})
 				})
 			
-				futureA.onCancelled(function (...args):void {
-					fail("futureA can never fail, it's a sequence of instantSuccess Futures")
-				})
+				futureASuccess.onCancelled(buildFail("futureA can never fail, it's a sequence of instantSuccess Futures"))
 					
-				futureA.onCompleted(async.add(function (result:String):void {
-					assertEquals(argC, result)
+				futureASuccess.onCompleted(async.add(function (result:String):void {
+					assertEquals(argCSuccess, result)
 				}))
 		}
 		
 		[Test]
 		public function testSuccessOrThenDepthTwo_TerminationAtDepthOne():void
 		{
-			const argA:String = 'argA'
-			const argB:String = 'argB'
-			const argC:String = 'argC'
-			const futureA:Future = instantSuccess(argA)
-			const futureB:Future = instantSuccess(argB)
-			const futureC:Future = instantSuccess(argC)
-			
-			futureA
+			futureASuccess
 				.orThen(function (resultA:String):Future {
-					return futureB.orThen(function (resultB:String):Future {
-						return futureC
+					return futureBSuccess.orThen(function (resultB:String):Future {
+						return futureCSuccess
 					})
 				})
 			
-			futureA.onCancelled(function (...args):void {
-				fail("futureA can never fail, it's a sequence of instantSuccess Futures")
-			})
+			futureASuccess.onCancelled(buildFail("futureA can never fail, it's a sequence of instantSuccess Futures"))
 			
-			futureA.onCompleted(async.add(function (result:String):void {
-				assertEquals(argA, result)
+			futureASuccess.onCompleted(async.add(function (result:String):void {
+				assertEquals(argASuccess, result)
 			}))
 		}
 		
 		[Test]
 		public function testSuccessOrThenDepthTwo_TerminationAtDepthOneWithLeadingAndThen():void
 		{
-			const argA:String = 'argA'
-			const argB:String = 'argB'
-			const argC:String = 'argC'
-			const futureA:Future = instantSuccess(argA)
-			const futureB:Future = instantSuccess(argB)
-			const futureC:Future = instantSuccess(argC)
-			
-			futureA
+			futureASuccess
 				.orThen(function (resultA:String):Future {
-					return futureB.andThen(function (resultB:String):Future {
-						return futureC
+					return futureBSuccess.andThen(function (resultB:String):Future {
+						return futureCSuccess
 					})
 				})
 			
-			futureA.onCancelled(function (...args):void {
-				fail("futureA can never fail, it's a sequence of instantSuccess Futures")
-			})
+			futureASuccess.onCancelled(buildFail("futureA can never fail, it's a sequence of instantSuccess Futures"))
 			
-			futureA.onCompleted(async.add(function (result:String):void {
-				assertEquals(argA, result)
+			futureASuccess.onCompleted(async.add(function (result:String):void {
+				assertEquals(argASuccess, result)
 			}))
 		}
 		
 		[Test]
 		public function testSuccessOrThenDepthTwo_TerminationAtDepthTwo():void
 		{
-			const argA:String = 'argA'
-			const argB:String = 'argB'
-			const argC:String = 'argC'
-			const futureA:Future = instantSuccess(argA)
-			const futureB:Future = instantSuccess(argB)
-			const futureC:Future = instantSuccess(argC)
-			
-			futureA
+			futureASuccess
 				.andThen(function (resultA:String):Future {
-					return futureB.orThen(function (resultB:String):Future {
-						return futureC
+					return futureBSuccess.orThen(function (resultB:String):Future {
+						return futureCSuccess
 					})
 				})
 			
-			futureA.onCancelled(function (...args):void {
-				fail("futureA can never fail, it's a sequence of instantSuccess Futures")
-			})
+			futureASuccess.onCancelled(buildFail("futureA can never fail, it's a sequence of instantSuccess Futures"))
 			
-			futureA.onCompleted(async.add(function (result:String):void {
-				assertEquals(argB, result)
+			futureASuccess.onCompleted(async.add(function (result:String):void {
+				assertEquals(argBSuccess, result)
 			}))
 		}
 		
@@ -190,8 +187,7 @@ package org.osflash.futures
 			const future:Future = instantFail('arg', [1 ,2])
 			
 			future.onCompleted(failCallback)
-			future.onCancelled(function (a:String):void {
-			})
+			future.onCancelled(function (a:String):void {})
 		}
 		
 		[Test]
@@ -209,107 +205,72 @@ package org.osflash.futures
 			const future:Future = instantFail('arg', [1, 2])
 			
 			future.onCompleted(failCallback)
-			future.onCancelled(async.add(function (a:String, b:Array):void {
-			}))
+			future.onCancelled(async.add(function (a:String, b:Array):void {}))
 		}
 		
 		[Test]
 		public function testFailAndThenDepthOne():void
 		{
-			const argA:String = 'argA'
-			const argB:String = 'argB'
-			const futureA:Future = instantFail(argA)
-			const futureB:Future = instantFail(argB)
-			
-			futureA
+			futureAFail
 				.orThen(function (resultA:String):Future {
-					return futureB
+					return futureBFail
 				})
 			
-			futureA.onCompleted(function (...args):void {
-				fail("futureA can never succeed, it's a sequence of instantFail Futures")
-			})
+			futureAFail.onCompleted(buildFail("futureA can never succeed, it's a sequence of instantFail Futures"))
 				
-			futureA.onCancelled(async.add(function (result:String):void {
-				assertEquals(argB, result)
+			futureAFail.onCancelled(async.add(function (result:String):void {
+				assertEquals(argBFail, result)
 			}))
 		}
 		
 		[Test]
 		public function testFailOrThenDepthTwo_FailChain():void
 		{
-			const argA:String = 'argA'
-			const argB:String = 'argB'
-			const argC:String = 'argC'
-			const futureA:Future = instantFail(argA)
-			const futureB:Future = instantFail(argB)
-			const futureC:Future = instantFail(argC)
-			
-			futureA
+			futureAFail
 				.orThen(function (resultA:String):Future {
-					return futureB.orThen(function (resultB:String):Future {
-						return futureC
+					return futureBFail.orThen(function (resultB:String):Future {
+						return futureCFail
 					})
 				})
 			
-			futureA.onCompleted(function (...args):void {
-				fail("futureA can never succeed, it's a sequence of instantFail Futures")
-			})
+			futureAFail.onCompleted(buildFail("futureA can never succeed, it's a sequence of instantFail Futures"))
 			
-			futureA.onCancelled(async.add(function (result:String):void {
-				assertEquals(argC, result)
+			futureAFail.onCancelled(async.add(function (result:String):void {
+				assertEquals(argCFail, result)
 			}))
 		}
 		
 		[Test]
 		public function testFailAndThenDepthTwo_FailAtDepthOne():void
 		{
-			const argA:String = 'argA'
-			const argB:String = 'argB'
-			const argC:String = 'argC'
-			const futureA:Future = instantFail(argA)
-			const futureB:Future = instantFail(argB)
-			const futureC:Future = instantFail(argC)
-			
-			futureA
+			futureAFail
 				.andThen(function (resultA:String):Future {
-					return futureB.andThen(function (resultB:String):Future {
-						return futureC
+					return futureBFail.andThen(function (resultB:String):Future {
+						return futureCFail
 					})
 				})
 			
-			futureA.onCompleted(function (...args):void {
-				fail("futureA can never succeed, it's a sequence of instantFail Futures")
-			})
+			futureAFail.onCompleted(buildFail("futureA can never succeed, it's a sequence of instantFail Futures"))
 			
-			futureA.onCancelled(async.add(function (result:String):void {
-				assertEquals(argA, result)
+			futureAFail.onCancelled(async.add(function (result:String):void {
+				assertEquals(argAFail, result)
 			}))
 		}
 		
 		[Test]
 		public function testFailAndThenDepthTwo_FailAtDepthTwo():void
 		{
-			const argA:String = 'argA'
-			const argB:String = 'argB'
-			const argC:String = 'argC'
-			const futureA:Future = instantFail(argA)
-			const futureB:Future = instantFail(argB)
-			const futureC:Future = instantFail(argC)
-			
-			futureA
+			futureAFail
 				.orThen(function (resultA:String):Future {
-					return futureB.andThen(function (resultB:String):Future {
-						return futureC
+					return futureBFail.andThen(function (resultB:String):Future {
+						return futureCFail
 					})
 				})
 			
-			futureA.onCompleted(function (...args):void {
-				fail("futureA can never succeed, it's a sequence of instantFail Futures")
-			})
+			futureAFail.onCompleted(buildFail("futureA can never succeed, it's a sequence of instantFail Futures"))
 			
-			futureA.onCancelled(async.add(function (result:String):void {
-				assertEquals(argB, result)
+			futureAFail.onCancelled(async.add(function (result:String):void {
+				assertEquals(argBFail, result)
 			}))
 		}
 	}
