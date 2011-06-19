@@ -2,7 +2,7 @@ package org.osflash.futures
 {
 	import org.osflash.futures.creation.instantSuccess;
 
-	public class InstantFutureSuccessTest extends SuccessTests
+	public class InstantFutureSuccessTest extends SuccessTestsBase
 	{
 		[Before]
 		public function setup():void 

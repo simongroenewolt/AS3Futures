@@ -2,7 +2,7 @@ package org.osflash.futures
 {
 	import asunit.asserts.assertEquals;
 
-	public class SuccessTests extends FuturesTestBase
+	public class SuccessTestsBase extends FuturesTestBase
 	{
 		[Test]
 		public function NoArgs():void

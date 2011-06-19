@@ -2,7 +2,7 @@ package org.osflash.futures
 {
 	import org.osflash.futures.creation.timedFail;
 
-	public class TimedFutureFailTest extends FailTests
+	public class TimedFutureFailTest extends FailTestsBase
 	{
 		[Before]
 		public function setup():void 

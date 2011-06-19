@@ -2,7 +2,7 @@ package org.osflash.futures
 {
 	import asunit.asserts.assertEquals;
 
-	public class FailTests extends FuturesTestBase
+	public class FailTestsBase extends FuturesTestBase
 	{
 		[Test(expects="ArgumentError")]
 		public function WrongListenerSigniture():void
