@@ -1,5 +1,10 @@
-package org.osflash.futures
+package org.osflash.futures.support
 {
+	import org.osflash.futures.Future;
+	import org.osflash.futures.creation.SyncedFuture;
+	import org.osflash.futures.creation.instantFail;
+	import org.osflash.futures.creation.instantSuccess;
+
 	/**
 	 * The base class of all Future implementations.  
 	 */	

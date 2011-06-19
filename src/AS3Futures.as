@@ -2,12 +2,12 @@ package {
     import flash.display.Sprite;
     
     import org.osflash.futures.Future;
-    import org.osflash.futures.TypedFuture;
-    import org.osflash.futures.instantFail;
-    import org.osflash.futures.instantSuccess;
-    import org.osflash.futures.timedFail;
-    import org.osflash.futures.timedSuccess;
-    import org.osflash.futures.waitOnCritical;
+    import org.osflash.futures.creation.TypedFuture;
+    import org.osflash.futures.creation.instantFail;
+    import org.osflash.futures.creation.instantSuccess;
+    import org.osflash.futures.creation.timedFail;
+    import org.osflash.futures.creation.timedSuccess;
+    import org.osflash.futures.creation.waitOnCritical;
 
     public class AS3Futures extends Sprite {
 

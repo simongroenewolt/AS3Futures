@@ -1,5 +1,7 @@
 package org.osflash.futures
 {
+	import org.osflash.futures.creation.timedSuccess;
+
 	public class TimedFutureSuccessTest extends SuccessTests
 	{
 		[Before]

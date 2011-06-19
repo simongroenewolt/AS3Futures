@@ -1,4 +1,4 @@
-package org.osflash.futures
+package org.osflash.futures.support
 {
 	public function assertListenerArguments(listener:Function, length:uint):void
 	{

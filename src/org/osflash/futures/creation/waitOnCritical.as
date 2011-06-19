@@ -1,5 +1,7 @@
-package org.osflash.futures 
+package org.osflash.futures.creation 
 {
+	import org.osflash.futures.Future;
+
 	public function waitOnCritical(...futures):Future
 	{
 		var compoundFuture:Future = futures[0]

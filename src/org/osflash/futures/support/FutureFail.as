@@ -1,5 +1,7 @@
-package org.osflash.futures
+package org.osflash.futures.support
 {
+	import org.osflash.futures.Future;
+
 	public class FutureFail extends BaseFuture
 	{
 		protected var args:Array

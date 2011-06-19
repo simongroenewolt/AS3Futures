@@ -1,6 +1,7 @@
 package org.osflash.futures 
 {
 	import asunit.framework.IAsync;
+	import org.osflash.futures.creation.TypedFuture;
 
 	public class TypedFutureTests 
 	{

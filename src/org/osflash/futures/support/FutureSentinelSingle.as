@@ -1,5 +1,7 @@
-package org.osflash.futures
+package org.osflash.futures.support
 {	
+	import org.osflash.futures.Future;
+
 	/**
 	 * Use this class to hold a reference to single Future so that the garbage collector doesn't get it's filth hands on it.
 	 * Since this Sentinal refers to a single future, and existing Future references will be disposed of.

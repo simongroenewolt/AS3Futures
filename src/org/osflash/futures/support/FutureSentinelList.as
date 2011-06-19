@@ -1,6 +1,7 @@
-package org.osflash.futures
+package org.osflash.futures.support
 {
 	import flash.utils.Dictionary;
+	import org.osflash.futures.Future;
 	
 	/**
 	 * Use this class to hold reference to Futures so that the garbage collector doesn't get it's filth hands on them.

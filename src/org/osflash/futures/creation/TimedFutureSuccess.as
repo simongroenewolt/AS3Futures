@@ -1,7 +1,8 @@
-package org.osflash.futures
+package org.osflash.futures.creation
 {
 	import flash.events.TimerEvent;
 	import flash.utils.Timer;
+	import org.osflash.futures.support.FutureSuccess;
 
 	public class TimedFutureSuccess extends FutureSuccess
 	{

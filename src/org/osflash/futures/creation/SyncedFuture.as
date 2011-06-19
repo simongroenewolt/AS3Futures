@@ -1,5 +1,7 @@
-package org.osflash.futures
+package org.osflash.futures.creation
 {
+	import org.osflash.futures.Future;
+
 	/**
 	 * When two or more Futures needs to synchonise in time this is the class that manages that 
 	 */	

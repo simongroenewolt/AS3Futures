@@ -1,5 +1,9 @@
-package org.osflash.futures
+package org.osflash.futures.creation
 {
+	import org.osflash.futures.support.BaseFuture;
+	import org.osflash.futures.support.ListenerList;
+	import org.osflash.futures.FutureProgressable;
+
 	public class TypedFuture extends BaseFuture implements FutureProgressable
 	{
 		protected const

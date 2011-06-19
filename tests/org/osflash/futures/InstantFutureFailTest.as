@@ -1,5 +1,7 @@
 package org.osflash.futures
 {
+	import org.osflash.futures.creation.instantFail;
+
 	public class InstantFutureFailTest extends FailTests
 	{
 		[Before]

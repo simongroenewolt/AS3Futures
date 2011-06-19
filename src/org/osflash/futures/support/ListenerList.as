@@ -1,5 +1,6 @@
-package org.osflash.futures
+package org.osflash.futures.support
 {
+
 	public class ListenerList
 	{
 		protected var functionList:Array = []
