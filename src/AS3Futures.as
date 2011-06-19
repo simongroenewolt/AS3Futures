@@ -3,7 +3,10 @@ package {
     
     import org.osflash.futures.Future;
     import org.osflash.futures.TypedFuture;
+    import org.osflash.futures.instantFail;
     import org.osflash.futures.instantSuccess;
+    import org.osflash.futures.timedFail;
+    import org.osflash.futures.timedSuccess;
     import org.osflash.futures.waitOnCritical;
 
     public class AS3Futures extends Sprite {
@@ -12,9 +15,27 @@ package {
 			
 			const argA:String = 'argA'
 			const argB:String = 'argB'
-			const futureA:Future = instantSuccess(argA)
-			const futureB:Future = instantSuccess(argB)
+//			const futureA:Future = timedSuccess(2000, argA)
+//			const futureB:Future = timedSuccess(2000, argB)
+				
+			const futureA:Future = timedFail(200, argA)
+			const futureB:Future = timedFail(200, argB)
+//			const futureA:Future = instantFail(argA)
+//			const futureB:Future = instantFail(argB)
+				
+			futureA
+				.orThen(function (resultA:String):Future {
+					return futureB
+				})
 			
+			futureA.onCompleted(function (result:String):void {
+				trace('complete:', result)
+			})
+			
+			futureA.onCancelled(function (result:String):void {
+				trace('cancel:', result)
+			})
+				
 //			futureA
 //				.mapComplete(function (resultA:String):String {
 //					return resultA + "mapped" 

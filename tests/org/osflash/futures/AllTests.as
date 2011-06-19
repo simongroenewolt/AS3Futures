@@ -7,6 +7,8 @@ package org.osflash.futures
 			org_osflash_futures_TypedFutureTest:TypedFutureTests,
 			org_osflash_futures_InstantFutureSuccessTest:InstantFutureSuccessTest,
 			org_osflash_futures_InstantFutureFailTest:InstantFutureFailTest,
+			org_osflash_futures_TimedFutureFailTest:TimedFutureFailTest,
+			org_osflash_futures_TimedFutureSuccessTest:TimedFutureSuccessTest,
 			org_osflash_futures_LifetimeTests:LifetimeTests
 	}
 }

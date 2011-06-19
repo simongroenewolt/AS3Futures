@@ -7,8 +7,14 @@ package org.osflash.futures
 	public class FuturesTestBase
 	{
 		[Inject]
-		public var async:IAsync
+		public var asyncManager:IAsync
 		
+		public var asyncTimeout:int = 30
+		
+		protected function async(f:Function):Function {
+			return asyncManager.add(f, asyncTimeout)
+		}	
+			
 		protected const
 			argASuccess:String = 'argASuccss',
 			argBSuccess:String = 'argBSuccess',

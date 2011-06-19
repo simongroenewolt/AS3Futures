@@ -9,7 +9,7 @@ package org.osflash.futures
 		{
 			const future:Future = buildFutureSuccess()
 			
-			future.onCompleted(async.add(emptyCallback))
+			future.onCompleted(async(emptyCallback))
 			future.onCancelled(failCallback)
 		}
 		
@@ -18,7 +18,7 @@ package org.osflash.futures
 		{
 			const future:Future = buildFutureSuccess('arg', [1 ,2])
 			
-			future.onCompleted(async.add(function (a:String, b:Array):void {
+			future.onCompleted(async(function (a:String, b:Array):void {
 			}))
 			
 			future.onCancelled(failCallback)
@@ -46,7 +46,7 @@ package org.osflash.futures
 					})
 				})
 			
-			futureA.onCompleted(async.add(function (result:String):void {
+			futureA.onCompleted(async(function (result:String):void {
 				assertEquals(argBSuccess + "mapped", result)
 			}))
 		}
@@ -60,7 +60,7 @@ package org.osflash.futures
 					return futureB
 				})
 			
-			futureA.onCompleted(async.add(function (result:String):void {
+			futureA.onCompleted(async(function (result:String):void {
 				assertEquals(argBSuccess, result)
 			}))
 		}
@@ -77,7 +77,7 @@ package org.osflash.futures
 			
 			futureA.onCancelled(buildFail("futureA can never fail, it's a sequence of success Futures"))
 			
-			futureA.onCompleted(async.add(function (result:String):void {
+			futureA.onCompleted(async(function (result:String):void {
 				assertEquals(argCSuccess, result)
 			}))
 		}
@@ -94,7 +94,7 @@ package org.osflash.futures
 			
 			futureA.onCancelled(buildFail("futureA can never fail, it's a sequence of success Futures"))
 			
-			futureA.onCompleted(async.add(function (result:String):void {
+			futureA.onCompleted(async(function (result:String):void {
 				assertEquals(argASuccess, result)
 			}))
 		}
@@ -111,7 +111,7 @@ package org.osflash.futures
 			
 			futureA.onCancelled(buildFail("futureA can never fail, it's a sequence of success Futures"))
 			
-			futureA.onCompleted(async.add(function (result:String):void {
+			futureA.onCompleted(async(function (result:String):void {
 				assertEquals(argASuccess, result)
 			}))
 		}
@@ -128,7 +128,7 @@ package org.osflash.futures
 			
 			futureA.onCancelled(buildFail("futureA can never fail, it's a sequence of success Futures"))
 			
-			futureA.onCompleted(async.add(function (result:String):void {
+			futureA.onCompleted(async(function (result:String):void {
 				assertEquals(argBSuccess, result)
 			}))
 		}
