@@ -4,17 +4,8 @@ package org.osflash.futures
 
 	public class FailTestsBase extends FuturesTestBase
 	{
-		[Test(expects="ArgumentError")]
-		public function WrongListenerSigniture():void
-		{
-			const future:Future = buildFutureFail('arg', [1 ,2])
-			
-			future.onCompleted(failCallback)
-			future.onCancelled(function (a:String):void {})
-		}
-		
 		[Test]
-		public function NoArgs():void
+		public function noArgsGivenShouldMeanAnyArgsAccepted():void
 		{
 			const future:Future = buildFutureFail()
 			
@@ -23,7 +14,7 @@ package org.osflash.futures
 		}
 		
 		[Test]
-		public function Args():void
+		public function argsGivenShouldMapToComplete():void
 		{
 			const future:Future = buildFutureFail('arg', [1, 2])
 			
@@ -31,8 +22,17 @@ package org.osflash.futures
 			future.onCancelled(async(function (a:String, b:Array):void {}))
 		}
 		
+		[Test(expects="ArgumentError")]
+		public function unsymetricalListenerSignitureShouldFail():void
+		{
+			const future:Future = buildFutureFail('arg', [1 ,2])
+			
+			future.onCompleted(failCallback)
+			future.onCancelled(function (a:String):void {})
+		}
+		
 		[Test]
-		public function AndThenDepthOne():void
+		public function argsFrom_OrThenFutureB_ShouldMapToCancel():void
 		{
 			futureA
 				.orThen(function (resultA:String):Future {
@@ -47,13 +47,14 @@ package org.osflash.futures
 		}
 		
 		[Test]
-		public function OrThenDepthTwo_FailChain():void
+		public function argsFrom_OrThenFutureC_ShouldMapToCancel():void
 		{
 			futureA
 				.orThen(function (resultA:String):Future {
-					return futureB.orThen(function (resultB:String):Future {
-						return futureC
-					})
+					return futureB
+						.orThen(function (resultB:String):Future {
+							return futureC
+						})
 				})
 			
 			futureA.onCompleted(buildFail("futureA can never succeed, it's a sequence of fail Futures"))
@@ -64,13 +65,14 @@ package org.osflash.futures
 		}
 		
 		[Test]
-		public function AndThenDepthTwo_FailAtDepthOne():void
+		public function argsFrom_FutureA_ShouldMapToCancel_AndThenAndThenChainIgnored():void
 		{
 			futureA
 				.andThen(function (resultA:String):Future {
-					return futureB.andThen(function (resultB:String):Future {
-						return futureC
-					})
+					return futureB
+						.andThen(function (resultB:String):Future {
+							return futureC
+						})
 				})
 			
 			futureA.onCompleted(buildFail("futureA can never succeed, it's a sequence of fail Futures"))
@@ -81,13 +83,14 @@ package org.osflash.futures
 		}
 		
 		[Test]
-		public function AndThenDepthTwo_FailAtDepthTwo():void
+		public function argsFrom_OrThenFutureB_ShouldMapToCancel_LeafAndThenIgnored():void
 		{
 			futureA
 				.orThen(function (resultA:String):Future {
-					return futureB.andThen(function (resultB:String):Future {
-						return futureC
-					})
+					return futureB
+						.andThen(function (resultB:String):Future {
+							return futureC
+						})
 				})
 			
 			futureA.onCompleted(buildFail("futureA can never succeed, it's a sequence of fail Futures"))

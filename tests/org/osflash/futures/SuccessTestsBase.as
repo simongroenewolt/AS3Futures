@@ -5,7 +5,7 @@ package org.osflash.futures
 	public class SuccessTestsBase extends FuturesTestBase
 	{
 		[Test]
-		public function NoArgs():void
+		public function noArgsGivenShouldMeanAnyArgsAccepted():void
 		{
 			const future:Future = buildFutureSuccess()
 			
@@ -14,7 +14,7 @@ package org.osflash.futures
 		}
 		
 		[Test]
-		public function Args():void
+		public function argsGivenShouldMapToComplete():void
 		{
 			const future:Future = buildFutureSuccess('arg', [1 ,2])
 			
@@ -25,7 +25,7 @@ package org.osflash.futures
 		}
 		
 		[Test(expects="ArgumentError")]
-		public function WrongListenerSigniture():void
+		public function unsymetricalListenerSignitureShouldFail():void
 		{
 			const future:Future = buildFutureSuccess('arg', [1 ,2])
 			
@@ -36,24 +36,7 @@ package org.osflash.futures
 		}
 		
 		[Test]
-		public function AndThen_Map():void
-		{
-			futureA
-				.andThen(function (resultA:String):Future {					
-					return futureB
-					.mapComplete(function (resultB:String):String {
-						return resultB + "mapped" 
-					})
-				})
-			
-			futureA.onCompleted(async(function (result:String):void {
-				assertEquals(argBSuccess + "mapped", result)
-			}))
-		}
-		
-		
-		[Test]
-		public function AndThenDepthOne():void
+		public function argsFrom_AndThenFutureB_ShouldMapToComplete():void
 		{
 			futureA
 				.andThen(function (resultA:String):Future {
@@ -66,13 +49,14 @@ package org.osflash.futures
 		}
 		
 		[Test]
-		public function AndThenDepthTwo():void
+		public function argsFrom_AndThenFutureC_ShouldMapToComplete():void
 		{
 			futureA
 				.andThen(function (resultA:String):Future {
-					return futureB.andThen(function (resultB:String):Future {
-						return futureC
-					})
+					return futureB
+						.andThen(function (resultB:String):Future {
+							return futureC
+						})
 				})
 			
 			futureA.onCancelled(buildFail("futureA can never fail, it's a sequence of success Futures"))
@@ -83,13 +67,14 @@ package org.osflash.futures
 		}
 		
 		[Test]
-		public function OrThenDepthTwo_TerminationAtDepthOne():void
+		public function argsFrom_FutureA_ShouldMapToComplete_OrThenOrThenChainIgnored():void
 		{
 			futureA
 				.orThen(function (resultA:String):Future {
-					return futureB.orThen(function (resultB:String):Future {
-						return futureC
-					})
+					return futureB
+						.orThen(function (resultB:String):Future {
+							return futureC
+						})
 				})
 			
 			futureA.onCancelled(buildFail("futureA can never fail, it's a sequence of success Futures"))
@@ -100,36 +85,54 @@ package org.osflash.futures
 		}
 		
 		[Test]
-		public function OrThenDepthTwo_TerminationAtDepthOneWithLeadingAndThen():void
+		public function argsFrom_FutureB_ShouldMapToComplete_LeafOrThenIgnored():void
 		{
 			futureA
-				.orThen(function (resultA:String):Future {
-					return futureB.andThen(function (resultB:String):Future {
-						return futureC
-					})
+			.andThen(function (resultA:String):Future {
+				return futureB
+				.orThen(function (resultB:String):Future {
+					return futureC
 				})
-			
-			futureA.onCancelled(buildFail("futureA can never fail, it's a sequence of success Futures"))
-			
-			futureA.onCompleted(async(function (result:String):void {
-				assertEquals(argASuccess, result)
-			}))
-		}
-		
-		[Test]
-		public function OrThenDepthTwo_TerminationAtDepthTwo():void
-		{
-			futureA
-				.andThen(function (resultA:String):Future {
-					return futureB.orThen(function (resultB:String):Future {
-						return futureC
-					})
-				})
+			})
 			
 			futureA.onCancelled(buildFail("futureA can never fail, it's a sequence of success Futures"))
 			
 			futureA.onCompleted(async(function (result:String):void {
 				assertEquals(argBSuccess, result)
+			}))
+		}
+		
+		[Test]
+		public function argsFrom_AndThenMappedFutureB_ShouldMapToComplete():void
+		{
+			futureA
+				.andThen(function (resultA:String):Future {					
+					return futureB
+						.mapComplete(function (resultB:String):String {
+							return resultB + "mapped" 
+						})
+				})
+			
+			futureA.onCompleted(async(function (result:String):void {
+				assertEquals(argBSuccess + "mapped", result)
+			}))
+		}
+		
+		[Test]
+		public function argsFrom_FutureA_ShouldMapToComplete_OrThenAndThenChainIgnored():void
+		{
+			futureA
+				.orThen(function (resultA:String):Future {
+					return futureB
+						.andThen(function (resultB:String):Future {
+							return futureC
+						})
+				})
+			
+			futureA.onCancelled(buildFail("futureA can never fail, it's a sequence of success Futures"))
+			
+			futureA.onCompleted(async(function (result:String):void {
+				assertEquals(argASuccess, result)
 			}))
 		}
 	}
