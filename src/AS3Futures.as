@@ -15,18 +15,38 @@ package {
 			
 			const argA:String = 'argA'
 			const argB:String = 'argB'
+			const argC:String = 'argC'
 //			const futureA:Future = timedSuccess(2000, argA)
 //			const futureB:Future = timedSuccess(2000, argB)
 				
-			const futureA:Future = timedFail(200, argA)
-			const futureB:Future = timedFail(200, argB)
+//			const futureA:Future = timedFail(200, argA)
+//			const futureB:Future = timedFail(200, argB)
 //			const futureA:Future = instantFail(argA)
 //			const futureB:Future = instantFail(argB)
-				
+			const futureA:Future = instantSuccess(argA)
+			const futureB:Future = instantSuccess(argB)
+			const futureC:Future = instantSuccess(argC)
+					
+//			futureA
+//				.andThen(function (resultA:String):Future {					
+//					return futureB
+//						.mapComplete(function (resultB:String):String {
+//							return resultB + "mapped" 
+//						})
+//				})
+					
 			futureA
-				.orThen(function (resultA:String):Future {
+				.andThen(function (resultA:String):Future {
 					return futureB
+						.andThen(function (resultB:String):Future {
+							return futureC
+						})
 				})
+			
+//			futureA
+//				.orThen(function (resultA:String):Future {
+//					return futureB
+//				})
 			
 			futureA.onCompleted(function (result:String):void {
 				trace('complete:', result)

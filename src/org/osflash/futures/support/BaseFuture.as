@@ -19,196 +19,319 @@ package org.osflash.futures.support
 			_beforeComplete:Function = function ():void {},
 			_onComplete:ListenerList = new ListenerList(),
 			
-			_isPast:Boolean = false,	// true if the Future is completed or cancelled, as in it is now something that exists in the past.
+			// true if the Future is completed or cancelled, as in it is now something that exists in the past.
+			// any attept to call functions to adjust the state of this future when it is past on will throw an error
+			_isPast:Boolean = false,	
 			
-			// if set the andThen  function is called which generates a nextFuture 
-			_andThen:Function,
-			nextCompleteFuture:BaseFuture,
+			// if set the andThen proxy is called which generates a nextFuture 
+			_andThenProxy:FutureProxy,
+			_mapComplete:Object, // can be a function or a plain Object, if it's a function, arguments will be applied and it will resolve to an object
 			
-			_orThen:Function,
-			nextCancelFuture:BaseFuture,
+			_orThenProxy:FutureProxy,
+			_mapCancel:Object // can be a function or a plain Object, if it's a function, arguments will be applied and it will resolve to an object
 			
-			_orElseCompleteWith:Object 	// function or Object
-			
-		public function BaseFuture()
-		{
-		}
-				
+		/**
+		 * @inheritDoc
+		 */
 		public function get isPast():Boolean
 		{
 			return _isPast
 		}
 		
-		protected function assetFutureIsNotPast(future:Future):void
-		{
-			if (future.isPast) throw new Error('future is past, move on, stop trying to relive it')
-		}
-		
+		/**
+		 * An admin function for other classes to register a single complete listener that will run before the consumer listeners will
+		 * @param f the function to callback
+		 * @return this Future
+		 */		
 		public function beforeComplete(f:Function):Future
 		{
-			assetFutureIsNotPast(this)
+			assertFutureIsAlive(this)
+			
+			if (_beforeComplete != null)
+				throw new Error('beforeComplete is already set on this Future')
+			
 			_beforeComplete = f
 			return this
 		}
 		
+		/**
+		 * @inheritDoc
+		 */
 		public function onCompleted(f:Function):Future
 		{
-			assetFutureIsNotPast(this)
+			assertFutureIsAlive(this)
 			_onComplete.add(f)
 			return this
 		}
 		
+		protected function map(mapper:Object, args:Array):*
+		{
+			return (mapper is Function) 
+				? mapper.apply(null, args)
+				: mapper
+		}
+		
+		protected function applyArgs(f:Function, mappedArgs:Object):*
+		{
+			if (mappedArgs is Array)
+				return f.apply(null, mappedArgs)
+			else
+				return f(mappedArgs)
+		}
+		
+		/**
+		 * @inheritDoc
+		 */
 		public function complete(...args):void
 		{
-			assetFutureIsNotPast(this)
+			completeItern(notifyCompleteListeners, args)
+			dispose()
+		}
+				
+		protected function completeItern(notify:Function, ...args:Array):void
+		{
+			assertFutureIsAlive(this)
 			
-			if (nextCompleteFuture)
-				assetFutureIsNotPast(nextCompleteFuture)
+			if (_andThenProxy != null && _andThenProxy.hasFuture)
+				throw new Error('This future has been defered to an andThen proxy')
 			
 			// if there is an andThen function, do not complete this future 
-			// but proxy the completion task to the Future created by the antThen function 
-			if (_andThen != null)
+			// but proxy the completion task to the Future created by the andThen function
+			if (_mapComplete != null)
 			{
-				// get the next future in the sequence
-				nextCompleteFuture = createProxyFuture(_andThen, args)
+				args = map(_mapComplete, args)
+			}
+			
+			if (_andThenProxy != null)
+			{// get the next future in the sequence
+				_andThenProxy.future = createProxyFuture(_andThenProxy.futureGenerator, args)
 			}
 			else
 			{
-				completeItern.apply(null, args)
+				_beforeComplete.apply(null, args)
+				notify.apply(null, args)
 			}
 		}
 		
-		public function createProxyFuture(createProxy:Function, args:Array):BaseFuture
+		protected function completeIternAndNotifyListeners(...args):void {
+			completeItern(notifyCompleteListeners, args)
+		}
+		
+		protected function cancelIternAndNotifyListeners(...args):void {
+			completeItern(notifyCompleteListeners, args)
+		}
+		
+		/**
+		 * 
+		 * @param createProxy
+		 * @param args
+		 * @return 
+		 * 
+		 */		
+		protected function createProxyFuture(createProxy:Function, args:Array):BaseFuture
 		{
-			const proxyFuture:BaseFuture = createProxy.apply(null, args)
+			const proxyFuture:BaseFuture = applyArgs(createProxy, args)
 			
-			proxyFuture.beforeComplete(completeItern)
-			proxyFuture.beforeCancel(cancelItern)
-				
+			assertFutureIsAlive(proxyFuture)
+			
+			proxyFuture.beforeComplete(completeIternAndNotifyListeners)
+			proxyFuture.beforeCancel(cancelIternAndNotifyListeners)
+			
 			return proxyFuture
 		}
 		
-		protected function completeItern(...args):void
+		protected function notifyCompleteListeners(...args):void
 		{
-			_beforeComplete.apply(null, args)
-			_onComplete.dispatch(args)
-			dispose()
+			_onComplete.dispatch(args)	
 		}
 		
+		protected function notifyCancelListeners(...args):void
+		{
+			_onCancel.dispatch(args)	
+		}
+		
+		/**
+		 * An admin function for other classes to register a single cancel listener that will run before the consumer listeners will 
+		 * @param f the function to callback
+		 * @return this Future
+		 */		
 		public function beforeCancel(f:Function):Future
 		{
-			assetFutureIsNotPast(this)
+			assertFutureIsAlive(this)
+			
+			if (_beforeCancel != null)
+				throw new Error('beforeCancel is already set on this Future')
+				
 			_beforeCancel = f
 			return this
 		}
 		
+		/**
+		 * @inheritDoc 
+		 */		
 		public function onCancelled(f:Function):Future 
 		{ 
-			assetFutureIsNotPast(this)
+			assertFutureIsAlive(this)
 			_onCancel.add(f)
 			return this 
 		}
 		
+		/**
+		 * @inheritDoc 
+		 */
 		public function cancel(...args):void
 		{
-			assetFutureIsNotPast(this)
-			
-			if (_orThen != null)
-			{
-				// get the next future in the sequence
-				nextCancelFuture = createProxyFuture(_orThen, args)
-			}
-			else
-			{
-				cancelItern.apply(null, args)
-			}
-		}
-		
-		protected function cancelItern(...args):void
-		{
-			_beforeCancel.apply(null, args)
-			_onCancel.dispatch(args)
+			cancelItern(notifyCancelListeners, args)
 			dispose()
 		}
 		
-		public function andThen(f:Function):Future
+		/**
+		 * Admin function 
+		 * @param args
+		 */		
+		protected function cancelItern(notify:Function, ...args):void
 		{
-			assetFutureIsNotPast(this)
+			assertFutureIsAlive(this)
 			
-			if (nextCompleteFuture != null && !nextCompleteFuture.isPast)
-				throw new Error('An andThen Future is already active on this Future')
+			if (_mapCancel != null)
+			{
+				args = map(_mapCancel, args)
+			}
+			
+			if (_orThenProxy != null)
+			{
+				if (_orThenProxy.hasFuture)
+					throw new Error('This future has been defered to an orTElse proxy')
 				
-			_andThen = f
-			return this
+				// get the next future in the sequence
+				_orThenProxy.future = createProxyFuture(_orThenProxy.futureGenerator, args)
+			}
+			else
+			{
+				_beforeCancel.apply(null, args)
+				notify.apply(null, args)
+			}
 		}
 		
-		public function orThen(f:Function):Future
+		/**
+		 * @inheritDoc
+		 */		
+		public function andThen(futureGenerator:Function):Future
 		{
-			assetFutureIsNotPast(this)
-			_orThen = f
+			assertFutureIsAlive(this)
+			
+			if (_andThenProxy != null)
+				throw new Error('This Future is already has an andThen proxy set')
+				
+			_andThenProxy = new FutureProxy(futureGenerator)
 			return this
 		}
 		
+		/**
+		 * @inheritDoc
+		 */
+		public function orThen(futureGenerator:Function):Future
+		{
+			assertFutureIsAlive(this)
+			_orThenProxy = new FutureProxy(futureGenerator)
+			return this
+		}
+		
+		/**
+		 * @inheritDoc
+		 */
 		public function mapComplete(funcOrObject:Object):Future
 		{
-			andThen(function (...args):Future {
+			assertFutureIsAlive(this)
+			
+			if (_mapComplete != null)
+				throw new Error('This Future already has a mapComplete set')
 				
-				const mappedArgs:* = (funcOrObject is Function) 
-				? funcOrObject.apply(null, args)
-				: funcOrObject
+			_mapComplete = funcOrObject
 				
-				if (mappedArgs is Array)
-					return instantSuccess.apply(null, mappedArgs)
-				else
-					return instantSuccess(mappedArgs) 
-			})
 			return this
 		}
 		
+		/**
+		 * @inheritDoc
+		 */
 		public function mapCancel(funcOrObject:Object):Future
 		{
-			orThen(function (...args):Future {
+			assertFutureIsAlive(this)
+			
+			if (_mapCancel != null)
+				throw new Error('This Future already has a mapCancel set')
+			
+			_mapCancel = funcOrObject
 				
-				const mappedArgs:* = (funcOrObject is Function) 
-					? funcOrObject.apply(null, args)
-					: funcOrObject
-				
-				if (mappedArgs is Array)
-					return instantFail.apply(null, mappedArgs)
-				else
-					return instantFail(mappedArgs) 
-			})
-			return this
+			return this	
 		}
 		
+		/**
+		 * @inheritDoc
+		 */
 		public function orElseCompleteWith(funcOrObject:Object):Future
 		{
-			orThen(function (...args):Future {
+			_mapCancel = funcOrObject
+			
+//			_mapCancel = function (...args):Future {
+//				
+//				const mappedArgs:* = (funcOrObject is Function) 
+//					? funcOrObject.apply(null, args)
+//					: funcOrObject
+//				
+//				if (mappedArgs is Array)
+//					return instantSuccess.apply(null, mappedArgs)
+//				else
+//					return instantSuccess(mappedArgs)
+//			})
 				
-				const mappedArgs:* = (funcOrObject is Function) 
-					? funcOrObject.apply(null, args)
-					: funcOrObject
-				
-				if (mappedArgs is Array)
-					return instantSuccess.apply(null, mappedArgs)
-				else
-					return instantSuccess(mappedArgs)
-			})
 			return this
 		}
 		
+		/**
+		 * @inheritDoc
+		 */
 		public function dispose():void 
 		{
-//			assetFutureIsNotPast(this)
+//			assertFutureIsAlive(this)
 			_isPast = true
 			_onComplete.dispose()
 			_onCancel.dispose()
 		}
 		
+		/**
+		 * @inheritDoc
+		 */
 		public function waitOnCritical(...otherFutures):Future
 		{
-			assetFutureIsNotPast(this)
+			assertFutureIsAlive(this)
 			return new SyncedFuture([this].concat(otherFutures))
 		}
+	}
+}
+
+import org.osflash.futures.Future;
+import org.osflash.futures.support.BaseFuture;
+import org.osflash.futures.support.assertFutureIsAlive;
+
+class FutureProxy
+{
+	protected var 
+		_futureGenerator:Function
+		
+	public var
+		future:BaseFuture
+		
+	public function get futureGenerator():Function { return _futureGenerator }
+			
+	public function FutureProxy(futureGenerator:Function)
+	{
+		_futureGenerator = futureGenerator
+	}
+	
+	public function get hasFuture():Boolean
+	{
+		return future != null
 	}
 }

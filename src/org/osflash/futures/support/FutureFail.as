@@ -29,7 +29,7 @@ package org.osflash.futures.support
 		
 		override public function onCancelled(f:Function):Future
 		{
-			assetFutureIsNotPast(this)
+			assertFutureIsAlive(this)
 			assertListenerArguments(f, args.length)
 			
 			if (proxyFuture)
@@ -53,13 +53,16 @@ package org.osflash.futures.support
 		
 		override public function orThen(createProxy:Function):Future
 		{
-			assetFutureIsNotPast(this)
+			assertFutureIsAlive(this)
 			
 			if (proxyFuture != null && !proxyFuture.isPast)
 				throw new Error('An orThen Future is already active on this Future')
 			
 			const futureFail:FutureFail = this
 			proxyFuture = createProxy.apply(null, args)
+				
+			assertFutureIsAlive(proxyFuture, 'the future generated for orThen proxy is already past')	
+				
 			proxyFuture.onCancelled(function (...args):void {
 				futureFail.args = args
 			})

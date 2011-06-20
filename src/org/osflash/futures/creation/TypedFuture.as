@@ -1,8 +1,9 @@
 package org.osflash.futures.creation
 {
+	import org.osflash.futures.FutureProgressable;
 	import org.osflash.futures.support.BaseFuture;
 	import org.osflash.futures.support.ListenerList;
-	import org.osflash.futures.FutureProgressable;
+	import org.osflash.futures.support.assertFutureIsAlive;
 
 	public class TypedFuture extends BaseFuture implements FutureProgressable
 	{
@@ -23,14 +24,14 @@ package org.osflash.futures.creation
 		
 		public function onProgress(f:Function):FutureProgressable
 		{
-			assetFutureIsNotPast(this)
+			assertFutureIsAlive(this)
 			_onProgress.add(f)
 			return this
 		}
 			
 		public function progress(unit:Number):void
 		{
-			assetFutureIsNotPast(this)
+			assertFutureIsAlive(this)
 			_onProgress.dispatch([unit])
 		}
 	}

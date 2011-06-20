@@ -1,6 +1,7 @@
 package org.osflash.futures
 {
 	import asunit.asserts.assertEquals;
+	import asunit.asserts.assertMatches;
 	import asunit.asserts.fail;
 	import asunit.framework.IAsync;
 
@@ -52,5 +53,22 @@ package org.osflash.futures
 			futureB.dispose()
 			futureC.dispose()
 		}
+		
+//		[Test]
+//		public function map_AndThen():void
+//		{
+//			futureA
+//				.mapComplete(function (resultA:String):String {
+//					return resultA + "mapped"
+//				})
+//				.andThen(async(function (resultA:String):Future {
+//					assertMatches(/^argA\w*mapped/, resultA)
+//					return futureB
+//				}))
+//					
+//			futureA.onCompleted(async(function (result:String):void {
+//				assertMatches(/^argB/, result)
+//			}))
+//		}
 	}
 }
