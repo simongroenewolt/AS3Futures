@@ -66,8 +66,9 @@ task :swc => 'bin/AS3Futures.swc'
 # DOC
 
 desc "Generate documentation at doc/"
-asdoc 'doc' do |t|
+asdoc 'doc' => :swc do |t|
   t.doc_sources << "src"
+  t.exclude_sources << "src/AS3Futures.as"
   t.exclude_sources << "src/AS3FuturesRunner.as"
 end
 
