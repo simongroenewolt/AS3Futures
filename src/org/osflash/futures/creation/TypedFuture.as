@@ -3,7 +3,6 @@ package org.osflash.futures.creation
 	import org.osflash.futures.Future;
 	import org.osflash.futures.FutureProgressable;
 	import org.osflash.futures.support.BaseFuture;
-	import org.osflash.futures.support.ListenerList;
 	import org.osflash.futures.support.assertFutureIsAlive;
 	import org.osflash.futures.support.assertListenerArguments;
 
