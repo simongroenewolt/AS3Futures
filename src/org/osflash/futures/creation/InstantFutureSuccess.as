@@ -11,11 +11,6 @@ package org.osflash.futures.creation
 			super(args)
 		}
 		
-		override public function cancel(...args):void
-		{
-			throw new Error("An InstantFutureSuccess cannot be cancelled by it's very nature, if you want to cancel a Future do not use a FutureSuccess")
-		}
-		
 		override public function onCompleted(f:Function):Future
 		{
 			assertListenerArguments(f, args)

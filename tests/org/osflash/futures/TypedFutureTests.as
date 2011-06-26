@@ -1,19 +1,25 @@
 package org.osflash.futures 
 {
 	import asunit.framework.IAsync;
+	
 	import org.osflash.futures.creation.TypedFuture;
 
-	public class TypedFutureTests 
+	public class TypedFutureTests extends FuturesTestBase
 	{
-		[Inject]
-		public var async:IAsync
+		[Before]
+		public function setup():void 
+		{
+			futureA = new FutureProxy(new TypedFuture(), function (future:Future):void { future.complete(argASuccess) })
+			futureB = new FutureProxy(new TypedFuture(), function (future:Future):void { future.complete(argBSuccess) })
+			futureC = new FutureProxy(new TypedFuture(), function (future:Future):void { future.complete(argCSuccess) })
+		}
 		
 		[Test]
 		public function shouldCompleteWithTyping():void
 		{
 			const future:Future = new TypedFuture([String, Array])
 				
-			future.onCompleted(async.add(function (a:String, b:Array):void {
+			future.onCompleted(async(function (a:String, b:Array):void {
 				
 			}))
 				
@@ -25,7 +31,7 @@ package org.osflash.futures
 		{
 			const future:Future = new TypedFuture()
 			
-			future.onCompleted(async.add(function (a:String, b:Array):void {
+			future.onCompleted(async(function (a:String, b:Array):void {
 				
 			}))
 			

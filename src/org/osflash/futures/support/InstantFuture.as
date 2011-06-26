@@ -13,6 +13,21 @@ package org.osflash.futures.support
 			this.args = args
 		}
 		
+		override public function complete(...args):void
+		{
+			
+		}
+		
+		override public function cancel(...args):void
+		{
+			
+		}
+		
+		override public function progress(unit:Number):void
+		{
+				
+		}
+		
 		override public function beforeComplete(f:Function):Future
 		{
 			return onCompleted(f)

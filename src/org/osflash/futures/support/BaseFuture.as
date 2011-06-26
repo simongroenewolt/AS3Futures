@@ -5,6 +5,7 @@ package org.osflash.futures.support
 	import flash.utils.Timer;
 	
 	import org.osflash.futures.Future;
+	import org.osflash.futures.FutureProgressable;
 	import org.osflash.futures.creation.SyncedFuture;
 	import org.osflash.futures.creation.instantFail;
 	import org.osflash.futures.creation.instantSuccess;
@@ -13,11 +14,12 @@ package org.osflash.futures.support
 	/**
 	 * The base class of all Future implementations.  
 	 */	
-	public class BaseFuture implements Future
+	public class BaseFuture implements FutureProgressable
 	{
 		protected const 
 			_onCancel:Array = [],
-			_onComplete:Array = []
+			_onComplete:Array = [],
+			_onProgress:Array = []
 			
 		protected var
 			// called just before all the public listeners when this future is cancelled
@@ -129,8 +131,6 @@ package org.osflash.futures.support
 				
 			completeItern(_onComplete, args)
 			dispose()
-			
-			trace('complete:', isPast)
 		}
 				
 		protected function completeItern(notifyFunctionList:Array, args:Array):void
@@ -253,7 +253,6 @@ package org.osflash.futures.support
 				
 			cancelItern(_onCancel, args)
 			dispose()
-			trace('cancel:', isPast)
 		}
 		
 		/**
@@ -374,6 +373,19 @@ package org.osflash.futures.support
 		{
 			assertFutureIsAlive(this)
 			return new SyncedFuture([this].concat(otherFutures))
+		}
+		
+		public function onProgress(f:Function):FutureProgressable
+		{
+			assertFutureIsAlive(this)
+			_onProgress.push(f)
+			return this
+		}
+		
+		public function progress(unit:Number):void
+		{
+			assertFutureIsAlive(this)
+			_onProgress.dispatch([unit])
 		}
 	}
 }

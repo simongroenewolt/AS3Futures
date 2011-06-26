@@ -9,9 +9,6 @@ package org.osflash.futures.creation
 
 	public class TypedFuture extends BaseFuture implements FutureProgressable
 	{
-		protected const 
-			_onProgress:Array = []
-				
 		protected var
 			completeTypeList:Array = [],
 			cancelTypeList:Array = []	
@@ -77,19 +74,6 @@ package org.osflash.futures.creation
 			{
 				f.apply(null, args)
 			}
-		}
-		
-		public function onProgress(f:Function):FutureProgressable
-		{
-			assertFutureIsAlive(this)
-			_onProgress.push(f)
-			return this
-		}
-			
-		public function progress(unit:Number):void
-		{
-			assertFutureIsAlive(this)
-			_onProgress.dispatch([unit])
 		}
 	}
 }

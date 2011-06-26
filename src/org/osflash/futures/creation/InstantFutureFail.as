@@ -11,11 +11,6 @@ package org.osflash.futures.creation
 			super(args)
 		}
 		
-		override public function complete(...args):void
-		{
-			throw new Error("An InstantFutureFail cannot be completed by it's very nature, if you want to complete a Future do not use a FutureFail")
-		}
-		
 		override public function onCancelled(f:Function):Future
 		{
 			assertListenerArguments(f, args)
