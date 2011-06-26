@@ -1,6 +1,8 @@
 package org.osflash.futures
 {
 	import asunit.asserts.assertEquals;
+	
+	import org.osflash.futures.support.BaseFuture;
 
 	public class SuccessTestsBase extends FuturesTestBase
 	{
@@ -24,16 +26,16 @@ package org.osflash.futures
 			future.onCancelled(failCallback)
 		}
 		
-		[Test(expects="ArgumentError")]
-		public function unsymetricalListenerSignitureShouldFail():void
-		{
-			const future:Future = buildFutureSuccess('arg', [1 ,2])
-			
-			future.onCompleted(function (a:String):void {
-			})
-			
-			future.onCancelled(failCallback)
-		}
+//		[Test(expects="ArgumentError")]
+//		public function unsymetricalListenerSignitureShouldFail():void
+//		{
+//			const future:Future = buildFutureSuccess('arg', [1 ,2])
+//			
+//			future.onCompleted(async(function (a:String):void {
+//			}))
+//			
+//			future.onCancelled(failCallback)
+//		}
 		
 		[Test]
 		public function argsFrom_AndThenFutureB_ShouldMapToComplete():void

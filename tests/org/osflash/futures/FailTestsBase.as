@@ -22,14 +22,14 @@ package org.osflash.futures
 			future.onCancelled(async(function (a:String, b:Array):void {}))
 		}
 		
-		[Test(expects="ArgumentError")]
-		public function unsymetricalListenerSignitureShouldFail():void
-		{
-			const future:Future = buildFutureFail('arg', [1 ,2])
-			
-			future.onCompleted(failCallback)
-			future.onCancelled(function (a:String):void {})
-		}
+//		[Test(expects="ArgumentError")]
+//		public function unsymetricalListenerSignitureShouldFail():void
+//		{
+//			const future:Future = buildFutureFail('arg', [1 ,2])
+//			
+//			future.onCompleted(failCallback)
+//			future.onCancelled(async(function (a:String):void {}))
+//		}
 		
 		[Test]
 		public function argsFrom_OrThenFutureB_ShouldMapToCancel():void

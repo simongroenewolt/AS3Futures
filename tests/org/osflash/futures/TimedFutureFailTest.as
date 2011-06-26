@@ -19,5 +19,11 @@ package org.osflash.futures
 			futureB = buildFutureFail(argBFail)
 			futureC = buildFutureFail(argCFail)
 		}
+		
+		[After]
+		override public function dispose():void
+		{
+			// Don't dispose the futures prematurely, since we are dealing with time here
+		}
 	}
 }

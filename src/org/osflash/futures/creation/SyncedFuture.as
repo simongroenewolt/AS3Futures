@@ -1,11 +1,12 @@
 package org.osflash.futures.creation
 {
 	import org.osflash.futures.Future;
+	import org.osflash.futures.support.BaseFuture;
 
 	/**
 	 * When two or more Futures needs to synchonise in time this is the class that manages that 
 	 */	
-	public class SyncedFuture extends TypedFuture implements Future
+	public class SyncedFuture extends BaseFuture implements Future
 	{
 		protected var
 			futuresToSync:Array = [],

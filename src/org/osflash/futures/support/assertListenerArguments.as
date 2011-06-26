@@ -1,13 +1,15 @@
 package org.osflash.futures.support
 {
-	public function assertListenerArguments(listener:Function, length:uint):void
+	public function assertListenerArguments(listener:Function, types:Array):void
 	{
-		if (listener.length != 0 && listener.length < length)
+		const typeAmount:uint = types.length
+			
+		if (listener.length != 0 && listener.length < typeAmount)
 		{
 			const argumentString:String = (listener.length == 1) ? 'argument' : 'arguments';
 			
 			throw new ArgumentError('Listener has '+listener.length+' '+argumentString+' but it needs at least '+
-				length+' to match the given types.');
+				typeAmount+' to match the given types.');
 		}
 	}
 }

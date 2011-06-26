@@ -1,34 +1,53 @@
 package org.osflash.futures.support
 {
+	import flash.events.Event;
+	import flash.events.TimerEvent;
+	import flash.utils.Timer;
+	
 	import org.osflash.futures.Future;
 	import org.osflash.futures.creation.SyncedFuture;
 	import org.osflash.futures.creation.instantFail;
 	import org.osflash.futures.creation.instantSuccess;
+	import org.osmf.events.TimeEvent;
 
 	/**
 	 * The base class of all Future implementations.  
 	 */	
 	public class BaseFuture implements Future
 	{
+		protected const 
+			_onCancel:Array = [],
+			_onComplete:Array = []
+			
 		protected var
 			// called just before all the public listeners when this future is cancelled
-			_beforeCancel:Function = function ():void {},
-			_onCancel:ListenerList = new ListenerList(),
-			
+			_beforeCancel:Function = null,
+			_afterCancel:Function = null,
 			// called just before all the public listeners when this future is completed
-			_beforeComplete:Function = function ():void {},
-			_onComplete:ListenerList = new ListenerList(),
+			_beforeComplete:Function = null,
+			_afterComplete:Function = null,
 			
 			// true if the Future is completed or cancelled, as in it is now something that exists in the past.
 			// any attept to call functions to adjust the state of this future when it is past on will throw an error
 			_isPast:Boolean = false,	
 			
 			// if set the andThen proxy is called which generates a nextFuture 
-			_andThenProxy:FutureProxy,
+			andThenProxy:FutureProxy,
 			_mapComplete:Object, // can be a function or a plain Object, if it's a function, arguments will be applied and it will resolve to an object
 			
-			_orThenProxy:FutureProxy,
+			orThenProxy:FutureProxy,
 			_mapCancel:Object // can be a function or a plain Object, if it's a function, arguments will be applied and it will resolve to an object
+			
+		/**
+		 * @inheritDoc
+		 */
+		public function dispose():void 
+		{
+//			assertFutureIsAlive(this)
+			_isPast = true
+			_onComplete.length = 0
+			_onCancel.length = 0
+		}	
 			
 		/**
 		 * @inheritDoc
@@ -55,20 +74,41 @@ package org.osflash.futures.support
 		}
 		
 		/**
+		 * An admin function for other classes to register a single complete listener that will run after the consumer listeners are notified
+		 * @param f the function to callback
+		 * @return this Future
+		 */		
+		public function afterComplete(f:Function):Future
+		{
+			assertFutureIsAlive(this)
+			
+			if (_afterComplete != null)
+				throw new Error('afterComplete is already set on this Future')
+			
+			_afterComplete = f
+			return this
+		}
+		
+		/**
 		 * @inheritDoc
 		 */
 		public function onCompleted(f:Function):Future
 		{
 			assertFutureIsAlive(this)
-			_onComplete.add(f)
+			_onComplete.push(f)
 			return this
 		}
 		
-		protected function map(mapper:Object, args:Array):*
+		protected function map(mapper:Object, args:Array):Array
 		{
-			return (mapper is Function) 
+			const mappedArgs:* = (mapper is Function) 
 				? mapper.apply(null, args)
 				: mapper
+				
+			if (mappedArgs is Array)
+				return mappedArgs
+			else
+				return [mappedArgs]
 		}
 		
 		protected function applyArgs(f:Function, mappedArgs:Object):*
@@ -84,16 +124,18 @@ package org.osflash.futures.support
 		 */
 		public function complete(...args):void
 		{
-			completeItern(notifyCompleteListeners, args)
+			if (andThenProxy != null && andThenProxy.hasFuture)
+				throw new Error('This future has been defered to an andThen proxy')
+				
+			completeItern(_onComplete, args)
 			dispose()
+			
+			trace('complete:', isPast)
 		}
 				
-		protected function completeItern(notify:Function, ...args:Array):void
+		protected function completeItern(notifyFunctionList:Array, args:Array):void
 		{
 			assertFutureIsAlive(this)
-			
-			if (_andThenProxy != null && _andThenProxy.hasFuture)
-				throw new Error('This future has been defered to an andThen proxy')
 			
 			// if there is an andThen function, do not complete this future 
 			// but proxy the completion task to the Future created by the andThen function
@@ -102,23 +144,29 @@ package org.osflash.futures.support
 				args = map(_mapComplete, args)
 			}
 			
-			if (_andThenProxy != null)
-			{// get the next future in the sequence
-				_andThenProxy.future = createProxyFuture(_andThenProxy.futureGenerator, args)
+			if (andThenProxy != null && !andThenProxy.hasFuture)
+			{
+				// get the next future in the sequence
+				createProxyFuture(andThenProxy, args)
 			}
 			else
 			{
-				_beforeComplete.apply(null, args)
-				notify.apply(null, args)
+				if (_beforeComplete != null)	
+					_beforeComplete.apply(null, args)
+				
+				dispatchComplete(notifyFunctionList, args)
+				
+				if (_afterComplete != null)	
+					_afterComplete.apply(null, args)
 			}
 		}
 		
 		protected function completeIternAndNotifyListeners(...args):void {
-			completeItern(notifyCompleteListeners, args)
+			completeItern(_onComplete, args)
 		}
 		
 		protected function cancelIternAndNotifyListeners(...args):void {
-			completeItern(notifyCompleteListeners, args)
+			cancelItern(_onCancel, args)
 		}
 		
 		/**
@@ -128,26 +176,29 @@ package org.osflash.futures.support
 		 * @return 
 		 * 
 		 */		
-		protected function createProxyFuture(createProxy:Function, args:Array):BaseFuture
+		protected function createProxyFuture(proxy:FutureProxy, args:Array):BaseFuture
 		{
-			const proxyFuture:BaseFuture = applyArgs(createProxy, args)
-			
+			const proxyFuture:BaseFuture = applyArgs(proxy.futureGenerator, args)
+			proxy.future = proxyFuture
 			assertFutureIsAlive(proxyFuture)
-			
-			proxyFuture.beforeComplete(completeIternAndNotifyListeners)
-			proxyFuture.beforeCancel(cancelIternAndNotifyListeners)
-			
+			listenToProxyFuture(proxyFuture)
 			return proxyFuture
+		}
+		
+		protected function listenToProxyFuture(proxyFuture:BaseFuture):void 
+		{
+			proxyFuture.afterComplete(completeIternAndNotifyListeners)
+			proxyFuture.afterCancel(cancelIternAndNotifyListeners)
 		}
 		
 		protected function notifyCompleteListeners(...args):void
 		{
-			_onComplete.dispatch(args)	
+			dispatch(_onComplete, args)	
 		}
 		
 		protected function notifyCancelListeners(...args):void
 		{
-			_onCancel.dispatch(args)	
+			dispatch(_onCancel, args)
 		}
 		
 		/**
@@ -167,12 +218,28 @@ package org.osflash.futures.support
 		}
 		
 		/**
+		 * An admin function for other classes to register a single cancel listener that will run before the consumer listeners will 
+		 * @param f the function to callback
+		 * @return this Future
+		 */		
+		public function afterCancel(f:Function):Future
+		{
+			assertFutureIsAlive(this)
+			
+			if (_afterCancel != null)
+				throw new Error('afterCancel is already set on this Future')
+			
+			_afterCancel = f
+			return this
+		}
+		
+		/**
 		 * @inheritDoc 
 		 */		
 		public function onCancelled(f:Function):Future 
 		{ 
 			assertFutureIsAlive(this)
-			_onCancel.add(f)
+			_onCancel.push(f)
 			return this 
 		}
 		
@@ -181,15 +248,19 @@ package org.osflash.futures.support
 		 */
 		public function cancel(...args):void
 		{
-			cancelItern(notifyCancelListeners, args)
+			if (orThenProxy != null && orThenProxy.hasFuture)
+				throw new Error('This future has been defered to an orTElse proxy')
+				
+			cancelItern(_onCancel, args)
 			dispose()
+			trace('cancel:', isPast)
 		}
 		
 		/**
 		 * Admin function 
 		 * @param args
 		 */		
-		protected function cancelItern(notify:Function, ...args):void
+		protected function cancelItern(notifyFunctionList:Array, args:Array):void
 		{
 			assertFutureIsAlive(this)
 			
@@ -198,18 +269,20 @@ package org.osflash.futures.support
 				args = map(_mapCancel, args)
 			}
 			
-			if (_orThenProxy != null)
+			if (orThenProxy != null && !orThenProxy.hasFuture)
 			{
-				if (_orThenProxy.hasFuture)
-					throw new Error('This future has been defered to an orTElse proxy')
-				
 				// get the next future in the sequence
-				_orThenProxy.future = createProxyFuture(_orThenProxy.futureGenerator, args)
+				createProxyFuture(orThenProxy, args)
 			}
 			else
 			{
-				_beforeCancel.apply(null, args)
-				notify.apply(null, args)
+				if (_beforeCancel != null)	
+					_beforeCancel.apply(null, args)
+				
+				dispatchCancel(notifyFunctionList, args)
+					
+				if (_afterCancel != null)	
+					_afterCancel.apply(null, args)
 			}
 		}
 		
@@ -220,10 +293,10 @@ package org.osflash.futures.support
 		{
 			assertFutureIsAlive(this)
 			
-			if (_andThenProxy != null)
+			if (andThenProxy != null)
 				throw new Error('This Future is already has an andThen proxy set')
 				
-			_andThenProxy = new FutureProxy(futureGenerator)
+			andThenProxy = new FutureProxy(futureGenerator)
 			return this
 		}
 		
@@ -233,7 +306,7 @@ package org.osflash.futures.support
 		public function orThen(futureGenerator:Function):Future
 		{
 			assertFutureIsAlive(this)
-			_orThenProxy = new FutureProxy(futureGenerator)
+			orThenProxy = new FutureProxy(futureGenerator)
 			return this
 		}
 		
@@ -273,31 +346,25 @@ package org.osflash.futures.support
 		public function orElseCompleteWith(funcOrObject:Object):Future
 		{
 			_mapCancel = funcOrObject
-			
-//			_mapCancel = function (...args):Future {
-//				
-//				const mappedArgs:* = (funcOrObject is Function) 
-//					? funcOrObject.apply(null, args)
-//					: funcOrObject
-//				
-//				if (mappedArgs is Array)
-//					return instantSuccess.apply(null, mappedArgs)
-//				else
-//					return instantSuccess(mappedArgs)
-//			})
-				
 			return this
 		}
 		
-		/**
-		 * @inheritDoc
-		 */
-		public function dispose():void 
+		private function dispatch(functionList:Array, args:Array):void
 		{
-//			assertFutureIsAlive(this)
-			_isPast = true
-			_onComplete.dispose()
-			_onCancel.dispose()
+			for each (var f:Function in functionList)
+			{
+				f.apply(null, args)
+			}
+		}
+		
+		protected function dispatchCancel(functionList:Array, args:Array):void
+		{
+			dispatch(functionList, args)
+		}
+		
+		protected function dispatchComplete(functionList:Array, args:Array):void
+		{
+			dispatch(functionList, args)
 		}
 		
 		/**
