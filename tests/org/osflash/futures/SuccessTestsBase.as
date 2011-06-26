@@ -1,6 +1,7 @@
 package org.osflash.futures
 {
 	import asunit.asserts.assertEquals;
+	import asunit.asserts.assertMatches;
 
 	public class SuccessTestsBase extends FuturesTestBase
 	{
@@ -133,6 +134,17 @@ package org.osflash.futures
 			
 			futureA.onCompleted(async(function (result:String):void {
 				assertEquals(argASuccess, result)
+			}))
+		}
+		
+		[Test]
+		public function argsFromFutureA_AND_B_ShouldMapToComplete():void 
+		{
+			const compound:Future = futureA.waitOnCritical(futureB)
+			
+			compound.onCompleted(async(function (resultA:String, resultB:String):void {
+				assertMatches(/^argA/, resultA)
+				assertMatches(/^argB/, resultB)
 			}))
 		}
 	}
