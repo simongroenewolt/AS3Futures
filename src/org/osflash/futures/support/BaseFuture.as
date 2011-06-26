@@ -385,7 +385,7 @@ package org.osflash.futures.support
 		public function progress(unit:Number):void
 		{
 			assertFutureIsAlive(this)
-			_onProgress.dispatch([unit])
+			dispatch(_onProgress, [unit])
 		}
 	}
 }
