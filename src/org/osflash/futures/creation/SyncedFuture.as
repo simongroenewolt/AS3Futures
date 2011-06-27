@@ -93,7 +93,6 @@ package org.osflash.futures.creation
 				
 				if (completesReceived == futuresToSync.length)
 				{
-					trace('all futures completed')
 					// make one array from all the arguments received, in the order the futures were registered in 
 					forEachChildFuture(function (cf:Future, argsSaved:Array):void {
 						argsTotal = argsTotal.concat(argsSaved)

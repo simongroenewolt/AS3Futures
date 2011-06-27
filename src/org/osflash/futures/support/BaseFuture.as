@@ -129,12 +129,24 @@ package org.osflash.futures.support
 			if (andThenProxy != null && andThenProxy.hasFuture)
 				throw new Error('This future has been defered to an andThen proxy')
 				
-			completeItern(_onComplete, args)
+			if(completeItern(_onComplete, args))
+			{
+				dispose()
+			}
 		}
-				
-		protected function completeItern(notifyFunctionList:Array, args:Array):void
+		
+		/**
+		 * 
+		 * @param notifyFunctionList
+		 * @param args
+		 * @return true if the call resulted in a dispatch 
+		 * 
+		 */		
+		protected function completeItern(notifyFunctionList:Array, args:Array):Boolean
 		{
 			assertFutureIsAlive(this)
+			
+			var hasDispatched:Boolean = false
 			
 			// if there is an andThen function, do not complete this future 
 			// but proxy the completion task to the Future created by the andThen function
@@ -158,8 +170,10 @@ package org.osflash.futures.support
 				if (_afterComplete != null)	
 					_afterComplete.apply(null, args)
 						
-				dispose()
+				hasDispatched = true
 			}
+			
+			return hasDispatched
 		}
 		
 		protected function completeIternAndNotifyListeners(...args):void {
@@ -252,16 +266,21 @@ package org.osflash.futures.support
 			if (orThenProxy != null && orThenProxy.hasFuture)
 				throw new Error('This future has been defered to an orTElse proxy')
 				
-			cancelItern(_onCancel, args)
+			if(cancelItern(_onCancel, args))
+			{
+				dispose()
+			}
 		}
 		
 		/**
 		 * Admin function 
 		 * @param args
 		 */		
-		protected function cancelItern(notifyFunctionList:Array, args:Array):void
+		protected function cancelItern(notifyFunctionList:Array, args:Array):Boolean
 		{
 			assertFutureIsAlive(this)
+			
+			var hasDispatched:Boolean = false
 			
 			if (_mapCancel != null)
 			{
@@ -283,8 +302,10 @@ package org.osflash.futures.support
 				if (_afterCancel != null)	
 					_afterCancel.apply(null, args)
 						
-				dispose()
+				hasDispatched = true
 			}
+			
+			return hasDispatched
 		}
 		
 		/**

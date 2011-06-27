@@ -31,13 +31,13 @@ package {
 //			const futureB:Future = timedFail(200, argB)
 //			const futureC:Future = timedFail(200, argC)
 				
-//			const futureA:Future = instantSuccess(argA)
+			const futureA:Future = instantSuccess(argA)
 //			const futureB:Future = instantSuccess(argB)
 //			const futureC:Future = instantSuccess(argC)
 				
-			const futureA:Future = instantFail(argA)
-			const futureB:Future = instantFail(argB)
-			const futureC:Future = instantFail(argC)
+//			const futureA:Future = instantFail(argA)
+//			const futureB:Future = instantFail(argB)
+//			const futureC:Future = instantFail(argC)
 				
 //			const compound:Future = futureA.waitOnCritical(futureB).waitOnCritical(futureC)
 			
@@ -51,16 +51,17 @@ package {
 //				trace('ONCANCEL:', result)
 //			})	
 			
-			futureA
-				.orThen(function (resultA:String):Future {
-					return futureB
-						.orThen(function (resultB:String):Future {
-							return futureC
-						})
-				})
+//			futureA
+//				.orThen(function (resultA:String):Future {
+//					return futureB
+//						.orThen(function (resultB:String):Future {
+//							return futureC
+//						})
+//				})
 				
 				
-			futureA.onCompleted(function (...args):void { trace('completed:', args) } )
+			futureA.onCompleted(function (...args):void { trace('completed1:', args) } )
+			futureA.onCompleted(function (...args):void { trace('completed2:', args) } )
 			futureA.onCancelled(function (...args):void { trace('cancelled:', args) } )
 				
 //			futureA.complete(argA)
