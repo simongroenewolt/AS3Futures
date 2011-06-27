@@ -89,12 +89,12 @@ package org.osflash.futures
 		public function argsFrom_FutureB_ShouldMapToComplete_LeafOrThenIgnored():void
 		{
 			futureA
-			.andThen(function (resultA:String):Future {
-				return futureB
-				.orThen(function (resultB:String):Future {
-					return futureC
+				.andThen(function (resultA:String):Future {
+					return futureB
+						.orThen(function (resultB:String):Future {
+							return futureC
+						})
 				})
-			})
 			
 			futureA.onCancelled(buildFail("futureA can never fail, it's a sequence of success Futures"))
 			

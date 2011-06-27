@@ -51,7 +51,7 @@ package org.osflash.futures
 		
 		public function onCancelled(f:Function):Future
 		{
-			return proxy('onCcancelled', [f])
+			return proxy('onCancelled', [f])
 		}
 		
 		public function cancel(...args):void

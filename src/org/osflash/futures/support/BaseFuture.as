@@ -130,7 +130,6 @@ package org.osflash.futures.support
 				throw new Error('This future has been defered to an andThen proxy')
 				
 			completeItern(_onComplete, args)
-			dispose()
 		}
 				
 		protected function completeItern(notifyFunctionList:Array, args:Array):void
@@ -158,6 +157,8 @@ package org.osflash.futures.support
 				
 				if (_afterComplete != null)	
 					_afterComplete.apply(null, args)
+						
+				dispose()
 			}
 		}
 		
@@ -252,7 +253,6 @@ package org.osflash.futures.support
 				throw new Error('This future has been defered to an orTElse proxy')
 				
 			cancelItern(_onCancel, args)
-			dispose()
 		}
 		
 		/**
@@ -282,6 +282,8 @@ package org.osflash.futures.support
 					
 				if (_afterCancel != null)	
 					_afterCancel.apply(null, args)
+						
+				dispose()
 			}
 		}
 		

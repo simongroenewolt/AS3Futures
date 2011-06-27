@@ -17,35 +17,53 @@ package {
 			const argA:String = 'argA'
 			const argB:String = 'argB'
 			const argC:String = 'argC'
+				
+			const futureA:Future = new TypedFuture()
+			const futureB:Future = new TypedFuture()
+			const futureC:Future = new TypedFuture()	
+				
 //			const futureA:Future = timedSuccess(2000, argA)
 //			const futureB:Future = timedSuccess(2000, argB)
 //			const futureC:Future = timedSuccess(2000, argC)
 				
 //			const futureA:Future = timedFail(200, argA)
-			const futureB:Future = timedFail(200, argB)
+//			const futureB:Future = timedFail(200, argB)
 //			const futureC:Future = timedFail(200, argC)
 				
-			const futureA:Future = instantSuccess(argA)
+//			const futureA:Future = instantSuccess(argA)
 //			const futureB:Future = instantSuccess(argB)
 //			const futureC:Future = instantSuccess(argC)
 				
 //			const futureA:Future = instantFail(argA)
 //			const futureB:Future = instantFail(argB)
 //			const futureC:Future = instantFail(argC)
-			
+				
 //			const compound:Future = futureA.waitOnCritical(futureB).waitOnCritical(futureC)
 			
-			const compound:Future = waitOnCritical(futureA, futureB)
+//			const compound:Future = waitOnCritical(futureA, futureB)
+//				
+//			compound.onCompleted(function (resultA:String, resultB:String):void {
+//				trace('ONCOMPLETE:', resultA, resultB)
+//			})
+//				
+//			compound.onCancelled(function (result:String):void {
+//				trace('ONCANCEL:', result)
+//			})	
 				
-			compound.onCompleted(function (resultA:String, resultB:String):void {
-				trace('ONCOMPLETE:', resultA, resultB)
-			})
+			futureA
+				.andThen(function (resultA:String):Future {
+					return futureB
+						.orThen(function (resultB:String):Future {
+							return futureC
+						})
+				})	
 				
-			compound.onCancelled(function (result:String):void {
-				trace('ONCANCEL:', result)
-			})	
-//			futureA.onCompleted(function (...args):void { trace('completed:', args) } )
-//			futureA.onCancelled(function (...args):void { trace('cancelled:', args) } )
+				
+			futureA.onCompleted(function (...args):void { trace('completed:', args) } )
+			futureA.onCancelled(function (...args):void { trace('cancelled:', args) } )
+				
+			futureA.complete(argA)
+			futureB.complete(argB)
 				
 //			const compound:Future = futureA.waitOnCritical(
 //				futureB
