@@ -38,7 +38,8 @@ package org.osflash.futures.support
 			_mapComplete:Object, // can be a function or a plain Object, if it's a function, arguments will be applied and it will resolve to an object
 			
 			orThenProxy:FutureProxy,
-			_mapCancel:Object // can be a function or a plain Object, if it's a function, arguments will be applied and it will resolve to an object
+			_mapCancel:Object, // can be a function or a plain Object, if it's a function, arguments will be applied and it will resolve to an object
+			_mapCancelToComplete:Object
 			
 		/**
 		 * @inheritDoc
@@ -286,6 +287,11 @@ package org.osflash.futures.support
 			{
 				args = map(_mapCancel, args)
 			}
+			else if (_mapCancelToComplete != null)
+			{
+				args = map(_mapCancelToComplete, args)
+				return complete.apply(null, args) 
+			}
 			
 			if (orThenProxy != null && !orThenProxy.hasFuture)
 			{
@@ -367,7 +373,10 @@ package org.osflash.futures.support
 		 */
 		public function orElseCompleteWith(funcOrObject:Object):Future
 		{
-			_mapCancel = funcOrObject
+			if (_mapCancelToComplete != null)
+				throw new Error('This Future already has a orElseCompleteWith/mapCancelToComplete set')
+				
+			_mapCancelToComplete = funcOrObject
 			return this
 		}
 		

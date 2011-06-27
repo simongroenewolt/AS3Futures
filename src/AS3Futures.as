@@ -19,7 +19,7 @@ package {
 			const argB:String = 'argB'
 			const argC:String = 'argC'
 				
-//			const futureA:Future = new TypedFuture()
+			const futureA:Future = new TypedFuture()
 //			const futureB:Future = new TypedFuture()
 //			const futureC:Future = new TypedFuture()	
 				
@@ -31,7 +31,7 @@ package {
 //			const futureB:Future = timedFail(200, argB)
 //			const futureC:Future = timedFail(200, argC)
 				
-			const futureA:Future = instantSuccess(argA)
+//			const futureA:Future = instantSuccess(argA)
 //			const futureB:Future = instantSuccess(argB)
 //			const futureC:Future = instantSuccess(argC)
 				
@@ -59,13 +59,15 @@ package {
 //						})
 //				})
 				
+			futureA.orElseCompleteWith(<loggingConfig>Moo</loggingConfig>)	
 				
-			futureA.onCompleted(function (...args):void { trace('completed1:', args) } )
-			futureA.onCompleted(function (...args):void { trace('completed2:', args) } )
+				
+			futureA.onCompleted(function (...args):void { trace('completed:', args) } )
 			futureA.onCancelled(function (...args):void { trace('cancelled:', args) } )
 				
 //			futureA.complete(argA)
 //			futureB.complete(argB)
+			futureA.cancel(argA)
 				
 //			const compound:Future = futureA.waitOnCritical(
 //				futureB
