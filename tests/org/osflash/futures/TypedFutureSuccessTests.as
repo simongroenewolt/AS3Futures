@@ -4,7 +4,7 @@ package org.osflash.futures
 	
 	import org.osflash.futures.creation.TypedFuture;
 
-	public class TypedFutureTests extends FuturesTestBase
+	public class TypedFutureSuccessTests extends FuturesTestBase
 	{
 		[Before]
 		public function setup():void 
