@@ -24,6 +24,19 @@ package org.osflash.futures.creation
 			return this
 		}
 		
+		/**
+		 * @inheritDoc
+		 */
+		override public function andThen(futureGenerator:Function):Future
+		{
+			super.andThen(futureGenerator)
+			notify = function (...errgs):void {
+				args = errgs
+			}
+			completeItern.apply(null, [[], args])
+			return this
+		}
+		
 		override public function orThen(f:Function):Future
 		{
 			return this

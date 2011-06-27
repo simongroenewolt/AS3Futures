@@ -1,5 +1,6 @@
 package {
     import flash.display.Sprite;
+    import flash.events.FullScreenEvent;
     
     import org.osflash.futures.Future;
     import org.osflash.futures.creation.TypedFuture;
@@ -18,9 +19,9 @@ package {
 			const argB:String = 'argB'
 			const argC:String = 'argC'
 				
-			const futureA:Future = new TypedFuture()
-			const futureB:Future = new TypedFuture()
-			const futureC:Future = new TypedFuture()	
+//			const futureA:Future = new TypedFuture()
+//			const futureB:Future = new TypedFuture()
+//			const futureC:Future = new TypedFuture()	
 				
 //			const futureA:Future = timedSuccess(2000, argA)
 //			const futureB:Future = timedSuccess(2000, argB)
@@ -34,9 +35,9 @@ package {
 //			const futureB:Future = instantSuccess(argB)
 //			const futureC:Future = instantSuccess(argC)
 				
-//			const futureA:Future = instantFail(argA)
-//			const futureB:Future = instantFail(argB)
-//			const futureC:Future = instantFail(argC)
+			const futureA:Future = instantFail(argA)
+			const futureB:Future = instantFail(argB)
+			const futureC:Future = instantFail(argC)
 				
 //			const compound:Future = futureA.waitOnCritical(futureB).waitOnCritical(futureC)
 			
@@ -49,21 +50,21 @@ package {
 //			compound.onCancelled(function (result:String):void {
 //				trace('ONCANCEL:', result)
 //			})	
-				
+			
 			futureA
-				.andThen(function (resultA:String):Future {
+				.orThen(function (resultA:String):Future {
 					return futureB
 						.orThen(function (resultB:String):Future {
 							return futureC
 						})
-				})	
+				})
 				
 				
 			futureA.onCompleted(function (...args):void { trace('completed:', args) } )
 			futureA.onCancelled(function (...args):void { trace('cancelled:', args) } )
 				
-			futureA.complete(argA)
-			futureB.complete(argB)
+//			futureA.complete(argA)
+//			futureB.complete(argB)
 				
 //			const compound:Future = futureA.waitOnCritical(
 //				futureB
