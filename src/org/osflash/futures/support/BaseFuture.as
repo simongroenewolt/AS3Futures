@@ -102,6 +102,19 @@ package org.osflash.futures.support
 			return this
 		}
 		
+		/**
+		 * @inheritDoc 
+		 */			
+		public function get hasCompletedListeners():Boolean
+		{
+			return _onComplete.length > 0
+		}
+		
+		public function get completedListeners():int
+		{
+			return _onComplete.length
+		}
+		
 		protected function map(mapper:Object, args:Array):Array
 		{
 			const mappedArgs:* = (mapper is Function) 
@@ -154,6 +167,7 @@ package org.osflash.futures.support
 			if (_mapComplete != null)
 			{
 				args = map(_mapComplete, args)
+				_mapComplete = null
 			}
 			
 			if (andThenProxy != null && !andThenProxy.hasFuture)
@@ -261,6 +275,22 @@ package org.osflash.futures.support
 		
 		/**
 		 * @inheritDoc 
+		 */			
+		public function get hasCancelledListeners():Boolean
+		{
+			return _onCancel.length > 0
+		}
+		
+		/**
+		 * @inheritDoc 
+		 */	
+		public function get cancelledListeners():int
+		{
+			return _onCancel.length
+		}
+		
+		/**
+		 * @inheritDoc 
 		 */
 		public function cancel(...args):void
 		{
@@ -322,7 +352,7 @@ package org.osflash.futures.support
 			assertFutureIsAlive(this)
 			
 			if (andThenProxy != null)
-				throw new Error('This Future is already has an andThen proxy set')
+				throw new Error('This Future already has an unsatisfied andThen proxy')
 				
 			andThenProxy = new FutureProxy(futureGenerator)
 			return this

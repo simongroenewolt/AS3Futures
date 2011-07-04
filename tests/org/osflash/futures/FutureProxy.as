@@ -38,6 +38,22 @@ package org.osflash.futures
 			return proxy('onCompleted', [f])
 		}
 		
+		/**
+		 * @inheritDoc 
+		 */			
+		public function get hasCompletedListeners():Boolean
+		{
+			return proxy('hasCompletedListeners', [])
+		}
+		
+		/**
+		 * @inheritDoc 
+		 */	
+		public function get completedListeners():int
+		{
+			return proxy('completedListeners', [])
+		}
+		
 		public function complete(...args):void
 		{
 			if (completeProxy != null)	completeProxy(future)
@@ -52,6 +68,19 @@ package org.osflash.futures
 		public function onCancelled(f:Function):Future
 		{
 			return proxy('onCancelled', [f])
+		}
+		
+		/**
+		 * @inheritDoc 
+		 */			
+		public function get hasCancelledListeners():Boolean
+		{
+			return proxy('hasCancelledListeners', [])
+		}
+		
+		public function get cancelledListeners():int
+		{
+			return proxy('cancelledListeners', [])
 		}
 		
 		public function cancel(...args):void

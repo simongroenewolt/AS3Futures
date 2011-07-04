@@ -163,6 +163,9 @@ package org.osflash.futures.creation
 			}
 		}
 		
+		/**
+		 * @inheritDoc 
+		 */
 		public function dispose():void
 		{
 			for each (var blob:Object in futuresToSync)
@@ -174,71 +177,145 @@ package org.osflash.futures.creation
 			futureBehvaiour.dispose()
 		}
 		
+		/**
+		 * @inheritDoc 
+		 */
 		public function sync(...otherFutures):Future
 		{
 			return new SyncedFuture(futuresToSync.concat(otherFutures))
 		}
 		
+		/**
+		 * @inheritDoc 
+		 */
 		public function get isPast():Boolean
 		{
 			return futureBehvaiour.isPast
 		}
 		
+		/**
+		 * @inheritDoc 
+		 */
 		public function onCompleted(f:Function):Future
 		{
 			return futureBehvaiour.onCompleted(f)
 		}
 		
+		/**
+		 * @inheritDoc 
+		 */			
+		public function get hasCompletedListeners():Boolean
+		{
+			return futureBehvaiour.hasCompletedListeners
+		}
+		
+		/**
+		 * @inheritDoc 
+		 */	
+		public function get completedListeners():int
+		{
+			return futureBehvaiour.completedListeners
+		}
+		
+		/**
+		 * @inheritDoc 
+		 */
 		public function complete(...args):void
 		{
 			futureBehvaiour.complete.apply(null, args)
 		}
 		
+		/**
+		 * @inheritDoc 
+		 */
 		public function mapComplete(funcOrObject:Object):Future
 		{
 			return futureBehvaiour.mapComplete(funcOrObject)
 		}
 		
+		/**
+		 * @inheritDoc 
+		 */
 		public function onCancelled(f:Function):Future
 		{
 			return futureBehvaiour.onCancelled(f)
 		}
 		
+		/**
+		 * @inheritDoc 
+		 */			
+		public function get hasCancelledListeners():Boolean
+		{
+			return futureBehvaiour.hasCancelledListeners
+		}
+		
+		/**
+		 * @inheritDoc 
+		 */			
+		public function get cancelledListeners():int
+		{
+			return futureBehvaiour.cancelledListeners
+		}
+		
+		/**
+		 * @inheritDoc 
+		 */
 		public function cancel(...args):void
 		{
 			futureBehvaiour.cancel.apply(null, args)
 		}
 		
+		/**
+		 * @inheritDoc 
+		 */
 		public function mapCancel(funcOrObject:Object):Future
 		{
 			return futureBehvaiour.mapCancel(funcOrObject)	
 		}
 		
+		/**
+		 * @inheritDoc 
+		 */
 		public function andThen(f:Function):Future
 		{
 			return futureBehvaiour.andThen(f)	
 		}		
 		
+		/**
+		 * @inheritDoc 
+		 */
 		public function orThen(f:Function):Future
 		{
 			return futureBehvaiour.orThen(f)
 		}
 		
+		/**
+		 * @inheritDoc 
+		 */
 		public function orElseCompleteWith(funcOrObject:Object):Future
 		{
 			return futureBehvaiour.orElseCompleteWith(funcOrObject)
 		}
 		
+		/**
+		 * @inheritDoc 
+		 */
 		public function waitOnCritical(...otherFutures):Future
 		{
 			return futureBehvaiour.waitOnCritical.apply(null, otherFutures)
 		}
 		
+		/**
+		 * @inheritDoc 
+		 */
 		public function onProgress(callback:Function):FutureProgressable // unit:Number
 		{
 			return futureBehvaiour.onProgress(callback)
 		}
 		
+		/**
+		 * @inheritDoc 
+		 */
 		public function progress(unit:Number):void
 		{
 			FutureProgressable(futureBehvaiour).progress(unit)

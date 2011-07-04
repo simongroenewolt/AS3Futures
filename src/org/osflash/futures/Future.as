@@ -17,6 +17,16 @@ package org.osflash.futures
 		 * @return the same Future object so method calls can be chained togeter
 		 */		
 		function onCompleted(f:Function):Future
+		
+		/**
+		 * @return true if their is at least one listener for completed events 
+		 */			
+		function get hasCompletedListeners():Boolean
+			
+		/**
+		 * @return amount of complete listeners 
+		 */			
+		function get completedListeners():int
 			
 		/**
 		 * Complete this Future
@@ -39,11 +49,21 @@ package org.osflash.futures
 		function onCancelled(f:Function):Future
 			
 		/**
+		 * @return true if their is at least one listener for cancelled 
+		 */			
+		function get hasCancelledListeners():Boolean
+			
+		/**
+		 * @return amount of cancelled listeners 
+		 */			
+		function get cancelledListeners():int
+			
+		/**
 		 * Cancel this Future
 		 * @param args the arguments to pass to all listening functions
 		 */			
-		function cancel(...args):void
-		
+		function cancel(...args):void	
+			
 		/**
 		 * Map the arguments of the cancel function to another form before they get passed to the listeners (onCancel) 
 		 * @param f function of the form: 
