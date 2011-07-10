@@ -1,6 +1,6 @@
 package org.osflash.futures.support
 {
-	import org.osflash.futures.Future;
+	import org.osflash.futures.IFuture;
 
 	public class InstantFuture extends BaseFuture
 	{
@@ -28,22 +28,22 @@ package org.osflash.futures.support
 				
 		}
 		
-		override public function beforeComplete(f:Function):Future
+		override public function beforeComplete(f:Function):IFuture
 		{
 			return onCompleted(f)
 		}
 		
-		override public function afterComplete(f:Function):Future
+		override public function afterComplete(f:Function):IFuture
 		{
 			return onCompleted(f)
 		}
 		
-		override public function beforeCancel(f:Function):Future
+		override public function beforeCancel(f:Function):IFuture
 		{
 			return onCancelled(f)
 		}
 		
-		override public function afterCancel(f:Function):Future
+		override public function afterCancel(f:Function):IFuture
 		{
 			return onCancelled(f)
 		}

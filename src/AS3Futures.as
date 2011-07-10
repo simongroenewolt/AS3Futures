@@ -2,7 +2,7 @@ package {
     import flash.display.Sprite;
     import flash.events.FullScreenEvent;
     
-    import org.osflash.futures.Future;
+    import org.osflash.futures.IFuture;
     import org.osflash.futures.creation.TypedFuture;
     import org.osflash.futures.creation.instantFail;
     import org.osflash.futures.creation.instantSuccess;
@@ -23,9 +23,9 @@ package {
 //			const futureB:Future = new TypedFuture()
 //			const futureC:Future = new TypedFuture()	
 				
-			const futureA:Future = timedSuccess(100, argA)
-			const futureB:Future = timedSuccess(1000, argB)
-			const futureC:Future = timedSuccess(1000, argC)
+			const futureA:IFuture = timedSuccess(100, argA)
+			const futureB:IFuture = timedSuccess(1000, argB)
+			const futureC:IFuture = timedSuccess(1000, argC)
 				
 //			const futureA:Future = timedFail(200, argA)
 //			const futureB:Future = timedFail(200, argB)
@@ -41,14 +41,14 @@ package {
 				
 //			const compound:Future = futureA.waitOnCritical(futureB)
 			
-			futureA.andThen(function (resultA:String):Future {
-				trace('resultA:', resultA)
-				return waitOnCritical(futureB, futureC)
-					.mapComplete(function (resultB:String, resultC:String):String {
-						trace('resultB:', resultB, 'resultC:', resultC)
-						return resultB + resultC + 'concatenated'
-					})
-			})
+//			futureA.andThen(function (resultA:String):IFuture {
+//				trace('resultA:', resultA)
+//				return waitOnCritical(futureB, futureC)
+//					.mapComplete(function (resultB:String, resultC:String):String {
+//						trace('resultB:', resultB, 'resultC:', resultC)
+//						return resultB + resultC + 'concatenated'
+//					})
+//			})
 				
 //			compound.onCompleted(function (result:String):void {
 //				trace('ONCOMPLETE:', result)

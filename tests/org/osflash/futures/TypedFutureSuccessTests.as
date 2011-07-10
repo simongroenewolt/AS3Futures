@@ -9,15 +9,15 @@ package org.osflash.futures
 		[Before]
 		public function setup():void 
 		{
-			futureA = new FutureProxy(new TypedFuture(), function (future:Future):void { future.complete(argASuccess) })
-			futureB = new FutureProxy(new TypedFuture(), function (future:Future):void { future.complete(argBSuccess) })
-			futureC = new FutureProxy(new TypedFuture(), function (future:Future):void { future.complete(argCSuccess) })
+			futureA = new FutureProxy(new TypedFuture(), function (future:IFuture):void { future.complete(argASuccess) })
+			futureB = new FutureProxy(new TypedFuture(), function (future:IFuture):void { future.complete(argBSuccess) })
+			futureC = new FutureProxy(new TypedFuture(), function (future:IFuture):void { future.complete(argCSuccess) })
 		}
 		
 		[Test]
 		public function shouldCompleteWithTyping():void
 		{
-			const future:Future = new TypedFuture([String, Array])
+			const future:IFuture = new TypedFuture([String, Array])
 				
 			future.onCompleted(async(function (a:String, b:Array):void {
 				
@@ -29,7 +29,7 @@ package org.osflash.futures
 		[Test]
 		public function shouldCompleteWithoutTyping():void
 		{
-			const future:Future = new TypedFuture()
+			const future:IFuture = new TypedFuture()
 			
 			future.onCompleted(async(function (a:String, b:Array):void {
 				
@@ -41,7 +41,7 @@ package org.osflash.futures
 		[Test(expects="ArgumentError")]
 		public function shouldFailDueToBadListenerSigniture():void
 		{
-			const future:Future = new TypedFuture([String, Array])
+			const future:IFuture = new TypedFuture([String, Array])
 			
 			future.onCompleted(function (a:String):void {
 				
@@ -51,7 +51,7 @@ package org.osflash.futures
 		[Test(expects="ArgumentError")]
 		public function shouldFailDueToInvalidCompleteArguments():void
 		{
-			const future:Future = new TypedFuture([String, Array])
+			const future:IFuture = new TypedFuture([String, Array])
 			
 			future.onCompleted(function (a:String, b:Array):void {
 				

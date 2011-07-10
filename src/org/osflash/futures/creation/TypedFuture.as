@@ -1,6 +1,6 @@
 package org.osflash.futures.creation
 {
-	import org.osflash.futures.Future;
+	import org.osflash.futures.IFuture;
 	import org.osflash.futures.FutureProgressable;
 	import org.osflash.futures.support.BaseFuture;
 	import org.osflash.futures.support.assertFutureIsAlive;
@@ -24,13 +24,13 @@ package org.osflash.futures.creation
 			_onProgress.length = 0
 		}
 		
-		override public function onCompleted(f:Function):Future
+		override public function onCompleted(f:Function):IFuture
 		{
 			assertListenerArguments(f, completeTypeList)
 			return super.onCompleted(f)
 		}
 		
-		override public function onCancelled(f:Function):Future
+		override public function onCancelled(f:Function):IFuture
 		{
 			assertListenerArguments(f, cancelTypeList)
 			return super.onCancelled(f)

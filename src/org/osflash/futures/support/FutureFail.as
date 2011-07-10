@@ -1,6 +1,6 @@
 package org.osflash.futures.support
 {
-	import org.osflash.futures.Future;
+	import org.osflash.futures.IFuture;
 
 	public class FutureFail extends BaseFuture
 	{

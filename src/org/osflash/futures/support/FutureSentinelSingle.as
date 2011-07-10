@@ -1,6 +1,6 @@
 package org.osflash.futures.support
 {	
-	import org.osflash.futures.Future;
+	import org.osflash.futures.IFuture;
 
 	/**
 	 * Use this class to hold a reference to single Future so that the garbage collector doesn't get it's filth hands on it.
@@ -8,9 +8,9 @@ package org.osflash.futures.support
 	 */	
 	public class FutureSentinelSingle
 	{
-		protected var future:Future
+		protected var future:IFuture
 		
-		public function watch(futureToWatch:Future):Future 
+		public function watch(futureToWatch:IFuture):IFuture 
 		{
 			if (future != null)
 			{

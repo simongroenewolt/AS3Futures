@@ -1,8 +1,8 @@
 package org.osflash.futures.creation 
 {
-	import org.osflash.futures.Future;
+	import org.osflash.futures.IFuture;
 
-	public function timedSuccess(duration:int, ...args):Future 
+	public function timedSuccess(duration:int, ...args):IFuture 
 	{
 		return new TimedFutureSuccess(duration, args)
 	}

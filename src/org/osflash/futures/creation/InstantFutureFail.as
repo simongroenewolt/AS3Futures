@@ -1,6 +1,6 @@
 package org.osflash.futures.creation
 {
-	import org.osflash.futures.Future;
+	import org.osflash.futures.IFuture;
 	import org.osflash.futures.support.InstantFuture;
 	import org.osflash.futures.support.assertListenerArguments;
 
@@ -11,7 +11,7 @@ package org.osflash.futures.creation
 			super(args)
 		}
 		
-		override public function onCancelled(f:Function):Future
+		override public function onCancelled(f:Function):IFuture
 		{
 			assertListenerArguments(f, args)
 			
@@ -27,7 +27,7 @@ package org.osflash.futures.creation
 		/**
 		 * @inheritDoc
 		 */		
-		override public function orThen(futureGenerator:Function):Future
+		override public function orThen(futureGenerator:Function):IFuture
 		{
 			super.orThen(futureGenerator)
 			const future:InstantFuture = this
@@ -38,12 +38,12 @@ package org.osflash.futures.creation
 			return this
 		}
 		
-		override public function onCompleted(f:Function):Future
+		override public function onCompleted(f:Function):IFuture
 		{
 			return this
 		}
 		
-		override public function andThen(createProxy:Function):Future
+		override public function andThen(createProxy:Function):IFuture
 		{
 			return this
 		}

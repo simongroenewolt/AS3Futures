@@ -1,7 +1,6 @@
 package org.osflash.futures.creation
 {
-	import org.osflash.futures.Future;
-	import org.osflash.futures.FutureProgressable;
+	import org.osflash.futures.IFuture;
 	import org.osflash.futures.support.BaseFuture;
 	import org.osflash.futures.support.InstantFuture;
 	import org.osflash.futures.support.assertFutureIsAlive;
@@ -11,7 +10,7 @@ package org.osflash.futures.creation
 	 * if all children succeed before listeners attach
 	 * if one child fails before listeners attach 
 	 */	
-	public class SyncedFuture implements FutureProgressable
+	public class SyncedFuture implements IFuture
 	{
 		protected var
 			// if the sync is satisfied on start up then it should act like an InstantFuture (Success or Fail depending if all children Futures succeded or one cancelled)
@@ -42,7 +41,7 @@ package org.osflash.futures.creation
 			}
 			
 			// startup could result in the sync being satisfied so we need to track this
-			var childFuture:Future // enumeration variable
+			var childFuture:IFuture // enumeration variable
 			
 			// if any of the sub-futures are cancelled then cancel this future and dispose of them all
 			// attach complete listener to each future
@@ -84,7 +83,7 @@ package org.osflash.futures.creation
 			setupComplete = true
 		}
 		
-		protected function buildOnChildComplete(childFuture:Future):Function
+		protected function buildOnChildComplete(childFuture:IFuture):Function
 		{
 			return function (...args):void {
 				completesReceived++
@@ -94,7 +93,7 @@ package org.osflash.futures.creation
 				if (completesReceived == futuresToSync.length)
 				{
 					// make one array from all the arguments received, in the order the futures were registered in 
-					forEachChildFuture(function (cf:Future, argsSaved:Array):void {
+					forEachChildFuture(function (cf:IFuture, argsSaved:Array):void {
 						argsTotal = argsTotal.concat(argsSaved)
 					})
 					
@@ -106,7 +105,7 @@ package org.osflash.futures.creation
 			}
 		}
 		
-		protected function saveArgs(childFuture:Future, args:Array):void 
+		protected function saveArgs(childFuture:IFuture, args:Array):void 
 		{
 			var blob:Object
 			
@@ -124,13 +123,13 @@ package org.osflash.futures.creation
 			}
 		}
 		
-		protected function cancelThis(futureThatCancelled:Future, args:Array):void
+		protected function cancelThis(futureThatCancelled:IFuture, args:Array):void
 		{
 			if(isCancelled == false)
 			{
 				isCancelled = true
 					
-				forEachChildFuture(function (childFuture:Future):void {
+				forEachChildFuture(function (childFuture:IFuture):void {
 					// only cancel a child future if it is not the child that just cancelled
 					if (childFuture != futureThatCancelled && childFuture.isPast == false)
 						childFuture.cancel.apply(null, args)
@@ -149,7 +148,7 @@ package org.osflash.futures.creation
 			{
 				for (i=0; i<futuresToSync.length; ++i)
 				{
-					const childFuture:Future = futuresToSync[i].future
+					const childFuture:IFuture = futuresToSync[i].future
 					f(childFuture)
 				}
 			}
@@ -170,7 +169,7 @@ package org.osflash.futures.creation
 		{
 			for each (var blob:Object in futuresToSync)
 			{
-				const future:Future = blob.future
+				const future:IFuture = blob.future
 				future.dispose()
 			}
 			
@@ -180,7 +179,7 @@ package org.osflash.futures.creation
 		/**
 		 * @inheritDoc 
 		 */
-		public function sync(...otherFutures):Future
+		public function sync(...otherFutures):IFuture
 		{
 			return new SyncedFuture(futuresToSync.concat(otherFutures))
 		}
@@ -196,7 +195,7 @@ package org.osflash.futures.creation
 		/**
 		 * @inheritDoc 
 		 */
-		public function onCompleted(f:Function):Future
+		public function onCompleted(f:Function):IFuture
 		{
 			return futureBehvaiour.onCompleted(f)
 		}
@@ -228,7 +227,7 @@ package org.osflash.futures.creation
 		/**
 		 * @inheritDoc 
 		 */
-		public function mapComplete(funcOrObject:Object):Future
+		public function mapComplete(funcOrObject:Object):IFuture
 		{
 			return futureBehvaiour.mapComplete(funcOrObject)
 		}
@@ -236,7 +235,7 @@ package org.osflash.futures.creation
 		/**
 		 * @inheritDoc 
 		 */
-		public function onCancelled(f:Function):Future
+		public function onCancelled(f:Function):IFuture
 		{
 			return futureBehvaiour.onCancelled(f)
 		}
@@ -268,7 +267,7 @@ package org.osflash.futures.creation
 		/**
 		 * @inheritDoc 
 		 */
-		public function mapCancel(funcOrObject:Object):Future
+		public function mapCancel(funcOrObject:Object):IFuture
 		{
 			return futureBehvaiour.mapCancel(funcOrObject)	
 		}
@@ -276,7 +275,7 @@ package org.osflash.futures.creation
 		/**
 		 * @inheritDoc 
 		 */
-		public function andThen(f:Function):Future
+		public function andThen(f:Function):IFuture
 		{
 			return futureBehvaiour.andThen(f)	
 		}		
@@ -284,7 +283,7 @@ package org.osflash.futures.creation
 		/**
 		 * @inheritDoc 
 		 */
-		public function orThen(f:Function):Future
+		public function orThen(f:Function):IFuture
 		{
 			return futureBehvaiour.orThen(f)
 		}
@@ -292,7 +291,7 @@ package org.osflash.futures.creation
 		/**
 		 * @inheritDoc 
 		 */
-		public function orElseCompleteWith(funcOrObject:Object):Future
+		public function orElseCompleteWith(funcOrObject:Object):IFuture
 		{
 			return futureBehvaiour.orElseCompleteWith(funcOrObject)
 		}
@@ -300,7 +299,7 @@ package org.osflash.futures.creation
 		/**
 		 * @inheritDoc 
 		 */
-		public function waitOnCritical(...otherFutures):Future
+		public function waitOnCritical(...otherFutures):IFuture
 		{
 			return futureBehvaiour.waitOnCritical.apply(null, otherFutures)
 		}
@@ -308,7 +307,7 @@ package org.osflash.futures.creation
 		/**
 		 * @inheritDoc 
 		 */
-		public function onProgress(callback:Function):FutureProgressable // unit:Number
+		public function onProgress(callback:Function):IFuture // unit:Number
 		{
 			return futureBehvaiour.onProgress(callback)
 		}
@@ -318,7 +317,7 @@ package org.osflash.futures.creation
 		 */
 		public function progress(unit:Number):void
 		{
-			FutureProgressable(futureBehvaiour).progress(unit)
+			IFuture(futureBehvaiour).progress(unit)
 		}
 	}
 }

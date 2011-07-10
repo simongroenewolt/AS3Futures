@@ -11,7 +11,7 @@ package org.osflash.futures
 		[Test(expects="Error")]
 		public function shouldFailDueToMultiComplete():void
 		{
-			const future:Future = new TypedFuture()
+			const future:IFuture = new TypedFuture()
 			future.cancel()
 			future.cancel()
 		}
@@ -19,7 +19,7 @@ package org.osflash.futures
 		[Test(expects="Error")]
 		public function shouldFailDueToMultiCancel():void
 		{
-			const future:Future = new TypedFuture()
+			const future:IFuture = new TypedFuture()
 			future.complete()
 			future.complete()
 		}
@@ -27,9 +27,9 @@ package org.osflash.futures
 		[Test]
 		public function compoundCancel():void
 		{
-			const futureA:Future = new TypedFuture()
-			const futureB:Future = new TypedFuture()
-			const futureAB:Future = futureA.waitOnCritical(futureB)
+			const futureA:IFuture = new TypedFuture()
+			const futureB:IFuture = new TypedFuture()
+			const futureAB:IFuture = futureA.waitOnCritical(futureB)
 			
 			futureAB.cancel()
 		}

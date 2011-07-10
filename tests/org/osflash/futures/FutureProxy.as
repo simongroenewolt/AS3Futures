@@ -6,11 +6,11 @@ package org.osflash.futures
 	public class FutureProxy implements FutureProgressable
 	{
 		protected var 
-			future:Future,
+			future:IFuture,
 			completeProxy:Function,
 			cancelProxy:Function
 		
-		public function FutureProxy(future:Future, completeProxy:Function=null, cancelProxy:Function=null)
+		public function FutureProxy(future:IFuture, completeProxy:Function=null, cancelProxy:Function=null)
 		{
 			this.future = future
 			this.completeProxy = completeProxy
@@ -27,13 +27,13 @@ package org.osflash.futures
 			const func:Function = future[methodName]
 			const result:* = func.apply(null, args)
 				
-			if (result is Future)
+			if (result is IFuture)
 			{
 				return new FutureProxy(result, completeProxy)
 			}
 		}
 		
-		public function onCompleted(f:Function):Future
+		public function onCompleted(f:Function):IFuture
 		{
 			return proxy('onCompleted', [f])
 		}
@@ -60,12 +60,12 @@ package org.osflash.futures
 			else						future.complete.apply(args)
 		}
 		
-		public function mapComplete(funcOrObject:Object):Future
+		public function mapComplete(funcOrObject:Object):IFuture
 		{
 			return proxy('mapComplete', [funcOrObject])
 		}
 		
-		public function onCancelled(f:Function):Future
+		public function onCancelled(f:Function):IFuture
 		{
 			return proxy('onCancelled', [f])
 		}
@@ -89,27 +89,27 @@ package org.osflash.futures
 			else						future.cancel.apply(null, args)
 		}
 		
-		public function mapCancel(funcOrObject:Object):Future
+		public function mapCancel(funcOrObject:Object):IFuture
 		{
 			return proxy('mapCancel', [funcOrObject])	
 		}
 		
-		public function andThen(f:Function):Future
+		public function andThen(f:Function):IFuture
 		{
 			return proxy('andThen', [f])	
 		}		
 		
-		public function orThen(f:Function):Future
+		public function orThen(f:Function):IFuture
 		{
 			return proxy('orThen', [f])
 		}
 		
-		public function orElseCompleteWith(funcOrObject:Object):Future
+		public function orElseCompleteWith(funcOrObject:Object):IFuture
 		{
 			return proxy('orElseCompleteWith', [funcOrObject])
 		}
 		
-		public function waitOnCritical(...otherFutures):Future
+		public function waitOnCritical(...otherFutures):IFuture
 		{
 			return proxy('waitOnCritical', otherFutures)
 		}

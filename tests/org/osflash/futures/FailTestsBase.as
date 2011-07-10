@@ -7,7 +7,7 @@ package org.osflash.futures
 		[Test]
 		public function noArgsGivenShouldMeanAnyArgsAccepted():void
 		{
-			const future:Future = buildFutureFail()
+			const future:IFuture = buildFutureFail()
 			
 			future.onCompleted(failCallback)
 			future.onCancelled(async(emptyCallback))
@@ -16,7 +16,7 @@ package org.osflash.futures
 		[Test]
 		public function argsGivenShouldMapToComplete():void
 		{
-			const future:Future = buildFutureFail('arg', [1, 2])
+			const future:IFuture = buildFutureFail('arg', [1, 2])
 			
 			future.onCompleted(failCallback)
 			future.onCancelled(async(function (a:String, b:Array):void {}))
@@ -35,7 +35,7 @@ package org.osflash.futures
 		public function argsFrom_OrThenFutureB_ShouldMapToCancel():void
 		{
 			futureA
-				.orThen(function (resultA:String):Future {
+				.orThen(function (resultA:String):IFuture {
 					return futureB
 				})
 			
@@ -50,9 +50,9 @@ package org.osflash.futures
 		public function argsFrom_OrThenFutureC_ShouldMapToCancel():void
 		{
 			futureA
-				.orThen(function (resultA:String):Future {
+				.orThen(function (resultA:String):IFuture {
 					return futureB
-						.orThen(function (resultB:String):Future {
+						.orThen(function (resultB:String):IFuture {
 							return futureC
 						})
 				})
@@ -68,9 +68,9 @@ package org.osflash.futures
 		public function argsFrom_FutureA_ShouldMapToCancel_AndThenAndThenChainIgnored():void
 		{
 			futureA
-				.andThen(function (resultA:String):Future {
+				.andThen(function (resultA:String):IFuture {
 					return futureB
-						.andThen(function (resultB:String):Future {
+						.andThen(function (resultB:String):IFuture {
 							return futureC
 						})
 				})
@@ -86,9 +86,9 @@ package org.osflash.futures
 		public function argsFrom_OrThenFutureB_ShouldMapToCancel_LeafAndThenIgnored():void
 		{
 			futureA
-				.orThen(function (resultA:String):Future {
+				.orThen(function (resultA:String):IFuture {
 					return futureB
-						.andThen(function (resultB:String):Future {
+						.andThen(function (resultB:String):IFuture {
 							return futureC
 						})
 				})

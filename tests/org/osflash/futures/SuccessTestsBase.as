@@ -8,7 +8,7 @@ package org.osflash.futures
 		[Test]
 		public function noArgsGivenShouldMeanAnyArgsAccepted():void
 		{
-			const future:Future = buildFutureSuccess()
+			const future:IFuture = buildFutureSuccess()
 			
 			future.onCompleted(async(emptyCallback))
 			future.onCancelled(failCallback)
@@ -17,7 +17,7 @@ package org.osflash.futures
 		[Test]
 		public function argsGivenShouldMapToComplete():void
 		{
-			const future:Future = buildFutureSuccess('arg', [1 ,2])
+			const future:IFuture = buildFutureSuccess('arg', [1 ,2])
 			
 			future.onCompleted(async(function (a:String, b:Array):void {
 			}))
@@ -40,7 +40,7 @@ package org.osflash.futures
 		public function argsFrom_AndThenFutureB_ShouldMapToComplete():void
 		{
 			futureA
-				.andThen(function (resultA:String):Future {
+				.andThen(function (resultA:String):IFuture {
 					return futureB
 				})
 			
@@ -53,9 +53,9 @@ package org.osflash.futures
 		public function argsFrom_AndThenFutureC_ShouldMapToComplete():void
 		{
 			futureA
-				.andThen(function (resultA:String):Future {
+				.andThen(function (resultA:String):IFuture {
 					return futureB
-						.andThen(function (resultB:String):Future {
+						.andThen(function (resultB:String):IFuture {
 							return futureC
 						})
 				})
@@ -71,9 +71,9 @@ package org.osflash.futures
 		public function argsFrom_FutureA_ShouldMapToComplete_OrThenOrThenChainIgnored():void
 		{
 			futureA
-				.orThen(function (resultA:String):Future {
+				.orThen(function (resultA:String):IFuture {
 					return futureB
-						.orThen(function (resultB:String):Future {
+						.orThen(function (resultB:String):IFuture {
 							return futureC
 						})
 				})
@@ -89,9 +89,9 @@ package org.osflash.futures
 		public function argsFrom_FutureB_ShouldMapToComplete_LeafOrThenIgnored():void
 		{
 			futureA
-				.andThen(function (resultA:String):Future {
+				.andThen(function (resultA:String):IFuture {
 					return futureB
-						.orThen(function (resultB:String):Future {
+						.orThen(function (resultB:String):IFuture {
 							return futureC
 						})
 				})
@@ -107,7 +107,7 @@ package org.osflash.futures
 		public function argsFrom_AndThenMappedFutureB_ShouldMapToComplete():void
 		{
 			futureA
-				.andThen(function (resultA:String):Future {					
+				.andThen(function (resultA:String):IFuture {					
 					return futureB
 						.mapComplete(function (resultB:String):String {
 							return resultB + "mapped" 
@@ -123,9 +123,9 @@ package org.osflash.futures
 		public function argsFrom_FutureA_ShouldMapToComplete_OrThenAndThenChainIgnored():void
 		{
 			futureA
-				.orThen(function (resultA:String):Future {
+				.orThen(function (resultA:String):IFuture {
 					return futureB
-						.andThen(function (resultB:String):Future {
+						.andThen(function (resultB:String):IFuture {
 							return futureC
 						})
 				})
@@ -140,7 +140,7 @@ package org.osflash.futures
 		[Test]
 		public function argsFromFutureA_SYNC_B_ShouldMapToComplete():void 
 		{
-			const compound:Future = futureA.waitOnCritical(futureB)
+			const compound:IFuture = futureA.waitOnCritical(futureB)
 			
 			compound.onCompleted(async(function (resultA:String, resultB:String):void {
 				assertMatches(/^argA/, resultA)

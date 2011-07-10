@@ -10,7 +10,7 @@ package org.osflash.futures
 			const duration:int = 200
 			asyncTimeout = 250
 				
-			buildFutureSuccess = function (...args):Future {
+			buildFutureSuccess = function (...args):IFuture {
 				args.unshift(duration)
 				return timedSuccess.apply(null, args)
 			}

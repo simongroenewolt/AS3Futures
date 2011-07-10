@@ -3,7 +3,7 @@ package org.osflash.futures.creation
 	import flash.events.TimerEvent;
 	import flash.utils.Timer;
 	
-	import org.osflash.futures.Future;
+	import org.osflash.futures.IFuture;
 	import org.osflash.futures.support.BaseFuture;
 	import org.osflash.futures.support.assertFutureIsAlive;
 

@@ -1,7 +1,7 @@
 package org.osflash.futures.support
 {
 	import flash.utils.Dictionary;
-	import org.osflash.futures.Future;
+	import org.osflash.futures.IFuture;
 	
 	/**
 	 * Use this class to hold reference to Futures so that the garbage collector doesn't get it's filth hands on them.
@@ -11,7 +11,7 @@ package org.osflash.futures.support
 	{
 		protected const futures:Dictionary = new Dictionary()
 		
-		public function watch(futureToWatch:Future):Future
+		public function watch(futureToWatch:IFuture):IFuture
 		{
 			if (futureToWatch in futures)
 				throw new Error('Future is already being watched')
@@ -25,7 +25,7 @@ package org.osflash.futures.support
 			return futureToWatch
 		}
 		
-		protected function disposeFuture(future:Future):Function
+		protected function disposeFuture(future:IFuture):Function
 		{
 			return function (...args):void {
 				delete futures[future]

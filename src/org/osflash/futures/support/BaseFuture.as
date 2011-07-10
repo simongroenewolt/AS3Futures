@@ -4,8 +4,7 @@ package org.osflash.futures.support
 	import flash.events.TimerEvent;
 	import flash.utils.Timer;
 	
-	import org.osflash.futures.Future;
-	import org.osflash.futures.FutureProgressable;
+	import org.osflash.futures.IFuture;
 	import org.osflash.futures.creation.SyncedFuture;
 	import org.osflash.futures.creation.instantFail;
 	import org.osflash.futures.creation.instantSuccess;
@@ -14,7 +13,7 @@ package org.osflash.futures.support
 	/**
 	 * The base class of all Future implementations.  
 	 */	
-	public class BaseFuture implements FutureProgressable
+	public class BaseFuture implements IFuture
 	{
 		protected const 
 			_onCancel:Array = [],
@@ -65,7 +64,7 @@ package org.osflash.futures.support
 		 * @param f the function to callback
 		 * @return this Future
 		 */		
-		public function beforeComplete(f:Function):Future
+		public function beforeComplete(f:Function):IFuture
 		{
 			assertFutureIsAlive(this)
 			
@@ -81,7 +80,7 @@ package org.osflash.futures.support
 		 * @param f the function to callback
 		 * @return this Future
 		 */		
-		public function afterComplete(f:Function):Future
+		public function afterComplete(f:Function):IFuture
 		{
 			assertFutureIsAlive(this)
 			
@@ -95,7 +94,7 @@ package org.osflash.futures.support
 		/**
 		 * @inheritDoc
 		 */
-		public function onCompleted(f:Function):Future
+		public function onCompleted(f:Function):IFuture
 		{
 			assertFutureIsAlive(this)
 			_onComplete.push(f)
@@ -236,7 +235,7 @@ package org.osflash.futures.support
 		 * @param f the function to callback
 		 * @return this Future
 		 */		
-		public function beforeCancel(f:Function):Future
+		public function beforeCancel(f:Function):IFuture
 		{
 			assertFutureIsAlive(this)
 			
@@ -252,7 +251,7 @@ package org.osflash.futures.support
 		 * @param f the function to callback
 		 * @return this Future
 		 */		
-		public function afterCancel(f:Function):Future
+		public function afterCancel(f:Function):IFuture
 		{
 			assertFutureIsAlive(this)
 			
@@ -266,7 +265,7 @@ package org.osflash.futures.support
 		/**
 		 * @inheritDoc 
 		 */		
-		public function onCancelled(f:Function):Future 
+		public function onCancelled(f:Function):IFuture 
 		{ 
 			assertFutureIsAlive(this)
 			_onCancel.push(f)
@@ -347,7 +346,7 @@ package org.osflash.futures.support
 		/**
 		 * @inheritDoc
 		 */		
-		public function andThen(futureGenerator:Function):Future
+		public function andThen(futureGenerator:Function):IFuture
 		{
 			assertFutureIsAlive(this)
 			
@@ -361,7 +360,7 @@ package org.osflash.futures.support
 		/**
 		 * @inheritDoc
 		 */
-		public function orThen(futureGenerator:Function):Future
+		public function orThen(futureGenerator:Function):IFuture
 		{
 			assertFutureIsAlive(this)
 			orThenProxy = new FutureProxy(futureGenerator)
@@ -371,7 +370,7 @@ package org.osflash.futures.support
 		/**
 		 * @inheritDoc
 		 */
-		public function mapComplete(funcOrObject:Object):Future
+		public function mapComplete(funcOrObject:Object):IFuture
 		{
 			assertFutureIsAlive(this)
 			
@@ -386,7 +385,7 @@ package org.osflash.futures.support
 		/**
 		 * @inheritDoc
 		 */
-		public function mapCancel(funcOrObject:Object):Future
+		public function mapCancel(funcOrObject:Object):IFuture
 		{
 			assertFutureIsAlive(this)
 			
@@ -401,7 +400,7 @@ package org.osflash.futures.support
 		/**
 		 * @inheritDoc
 		 */
-		public function orElseCompleteWith(funcOrObject:Object):Future
+		public function orElseCompleteWith(funcOrObject:Object):IFuture
 		{
 			if (_mapCancelToComplete != null)
 				throw new Error('This Future already has a orElseCompleteWith/mapCancelToComplete set')
@@ -431,13 +430,13 @@ package org.osflash.futures.support
 		/**
 		 * @inheritDoc
 		 */
-		public function waitOnCritical(...otherFutures):Future
+		public function waitOnCritical(...otherFutures):IFuture
 		{
 			assertFutureIsAlive(this)
 			return new SyncedFuture([this].concat(otherFutures))
 		}
 		
-		public function onProgress(f:Function):FutureProgressable
+		public function onProgress(f:Function):IFuture
 		{
 			assertFutureIsAlive(this)
 			_onProgress.push(f)
@@ -452,7 +451,7 @@ package org.osflash.futures.support
 	}
 }
 
-import org.osflash.futures.Future;
+import org.osflash.futures.IFuture;
 import org.osflash.futures.support.BaseFuture;
 import org.osflash.futures.support.assertFutureIsAlive;
 

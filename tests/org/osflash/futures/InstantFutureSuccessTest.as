@@ -7,7 +7,7 @@ package org.osflash.futures
 		[Before]
 		public function setup():void 
 		{
-			buildFutureSuccess = function (...args):Future {
+			buildFutureSuccess = function (...args):IFuture {
 				return instantSuccess.apply(null, args)
 			}
 			

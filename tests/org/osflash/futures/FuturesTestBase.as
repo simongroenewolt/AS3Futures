@@ -24,18 +24,18 @@ package org.osflash.futures
 			argBFail:String = 'argBFail',
 			argCFail:String = 'argCFail'
 		
-		protected var buildFutureSuccess:Function = function (...args):Future {
+		protected var buildFutureSuccess:Function = function (...args):IFuture {
 			throw new Error('implment buildFutureSuccess')
 		}
 			
-		protected var buildFutureFail:Function = function (...args):Future {
+		protected var buildFutureFail:Function = function (...args):IFuture {
 			throw new Error('implment buildFutureFail')
 		}
 			
 		protected var
-			futureA:Future, 
-			futureB:Future,
-			futureC:Future
+			futureA:IFuture, 
+			futureB:IFuture,
+			futureC:IFuture
 		
 		protected const 
 			emptyCallback:Function = function (...args):void {},
