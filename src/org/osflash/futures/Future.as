@@ -1,42 +1,60 @@
 package org.osflash.futures
 {
+	import org.osflash.futures.support.assertFutureIsAlive;
+
 	public class Future implements IFuture
 	{
-		public function Future()
-		{
-		}
+		protected var
+			_onComplete:Function,
+			_onCancel:Function,
+			_onProgress:Function,
+			_isPast:Boolean
 		
 		public function get isPast():Boolean
 		{
-			return false;
+			return _isPast
 		}
 		
-		public function onProgress(callback:Function):IFuture
+		public function onProgress(f:Function):IFuture
 		{
-			return null;
+			assertThisFutureIsAlive()
+			assertNotNull(_onComplete, 'onProgress is already being handled')
+			_onProgress = f;
+			return this;
+		}
+		
+		protected function assertThisFutureIsAlive(message:String=null):void 
+		{
+			assertFutureIsAlive(this, message)
+		}
+		
+		protected function assertNotNull(property:*, message:String):void 
+		{
+			if (property != null)
+				throw new Error(message)
 		}
 		
 		public function progress(unit:Number):void
 		{
+			assertThisFutureIsAlive()
 		}
 		
-		public function onCompleted(f:Function):IFuture
+		public function onComplete(f:Function):IFuture
 		{
-			return null;
+			assertThisFutureIsAlive()
+			assertNotNull(_onComplete, 'onComplete is already being handled')
+			_onComplete = f
+			return this;
 		}
 		
-		public function get hasCompletedListeners():Boolean
+		public function get hasCompleteListener():Boolean
 		{
-			return false;
-		}
-		
-		public function get completedListeners():int
-		{
-			return 0;
+			return _onComplete;
 		}
 		
 		public function complete(...args):void
 		{
+			assertThisFutureIsAlive()
 		}
 		
 		public function mapComplete(funcOrObject:Object):IFuture
@@ -44,23 +62,22 @@ package org.osflash.futures
 			return null;
 		}
 		
-		public function onCancelled(f:Function):IFuture
+		public function onCancel(f:Function):IFuture
 		{
-			return null;
+			assertThisFutureIsAlive()
+			assertNotNull(_onComplete, 'onCancel is already being handled')
+			_onCancel = f
+			return this;
 		}
 		
-		public function get hasCancelledListeners():Boolean
+		public function get hasCancelListener():Boolean
 		{
 			return false;
 		}
 		
-		public function get cancelledListeners():int
-		{
-			return 0;
-		}
-		
 		public function cancel(...args):void
 		{
+			assertThisFutureIsAlive()
 		}
 		
 		public function mapCancel(funcOrObject:Object):IFuture
@@ -70,6 +87,7 @@ package org.osflash.futures
 		
 		public function dispose():void
 		{
+			_onComplete = _onCancel = _onProgress = null
 		}
 	}
 }

@@ -104,7 +104,7 @@ package org.osflash.futures.support
 		/**
 		 * @inheritDoc 
 		 */			
-		public function get hasCompletedListeners():Boolean
+		public function get hasCompleteListener():Boolean
 		{
 			return _onComplete.length > 0
 		}
@@ -275,9 +275,17 @@ package org.osflash.futures.support
 		/**
 		 * @inheritDoc 
 		 */			
-		public function get hasCancelledListeners():Boolean
+		public function get hasCancelListener():Boolean
 		{
 			return _onCancel.length > 0
+		}
+		
+		/**
+		 * @inheritDoc 
+		 */			
+		public function get hasProgressListener():Boolean
+		{
+			return _onProgress.length > 0
 		}
 		
 		/**

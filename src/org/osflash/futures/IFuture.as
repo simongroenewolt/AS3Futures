@@ -17,8 +17,13 @@ package org.osflash.futures
 		 * Unit is a unit range number [0->1] 
 		 * @return the same FutureProgressable so that functions can be chained
 		 */		
-		function onProgress(callback:Function):IFuture // unit:Number
+		function onProgress(f:Function):IFuture // unit:Number
 		
+		/**
+		 * @return true if their is at least one listener for progress events 
+		 */			
+		function get hasProgressListener():Boolean	
+			
 		/**
 		 * update all listening functions of the progress of this future
 		 * @param unit
@@ -34,12 +39,7 @@ package org.osflash.futures
 		/**
 		 * @return true if their is at least one listener for completed events 
 		 */			
-		function get hasCompletedListeners():Boolean
-			
-		/**
-		 * @return amount of complete listeners 
-		 */			
-		function get completedListeners():int
+		function get hasCompleteListener():Boolean
 			
 		/**
 		 * Complete this Future
@@ -64,12 +64,7 @@ package org.osflash.futures
 		/**
 		 * @return true if their is at least one listener for cancelled 
 		 */			
-		function get hasCancelledListeners():Boolean
-			
-		/**
-		 * @return amount of cancelled listeners 
-		 */			
-		function get cancelledListeners():int
+		function get hasCancelListener():Boolean
 			
 		/**
 		 * Cancel this Future

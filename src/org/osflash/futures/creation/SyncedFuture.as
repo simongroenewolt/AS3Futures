@@ -203,9 +203,9 @@ package org.osflash.futures.creation
 		/**
 		 * @inheritDoc 
 		 */			
-		public function get hasCompletedListeners():Boolean
+		public function get hasCompleteListener():Boolean
 		{
-			return futureBehvaiour.hasCompletedListeners
+			return futureBehvaiour.hasCompleteListener
 		}
 		
 		/**
@@ -240,12 +240,17 @@ package org.osflash.futures.creation
 			return futureBehvaiour.onCancelled(f)
 		}
 		
+		public function get hasProgressListener():Boolean
+		{
+			return futureBehvaiour.hasProgressListener
+		}
+		
 		/**
 		 * @inheritDoc 
 		 */			
-		public function get hasCancelledListeners():Boolean
+		public function get hasCancelListener():Boolean
 		{
-			return futureBehvaiour.hasCancelledListeners
+			return futureBehvaiour.hasCancelListener
 		}
 		
 		/**
