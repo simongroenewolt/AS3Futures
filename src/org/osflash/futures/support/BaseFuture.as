@@ -4,6 +4,7 @@ package org.osflash.futures.support
 	import flash.events.TimerEvent;
 	import flash.utils.Timer;
 	
+	import org.osflash.futures.Future;
 	import org.osflash.futures.IFuture;
 	import org.osflash.futures.creation.SyncedFuture;
 	import org.osflash.futures.creation.instantFail;
@@ -60,6 +61,14 @@ package org.osflash.futures.support
 		}
 		
 		/**
+		 * @inheritDoc
+		 */
+		public function isolate():IFuture
+		{
+			return new Future()
+		}
+		
+		/**
 		 * An admin function for other classes to register a single complete listener that will run before the consumer listeners will
 		 * @param f the function to callback
 		 * @return this Future
@@ -94,7 +103,7 @@ package org.osflash.futures.support
 		/**
 		 * @inheritDoc
 		 */
-		public function onCompleted(f:Function):IFuture
+		public function onComplete(f:Function):IFuture
 		{
 			assertFutureIsAlive(this)
 			_onComplete.push(f)
@@ -265,7 +274,7 @@ package org.osflash.futures.support
 		/**
 		 * @inheritDoc 
 		 */		
-		public function onCancelled(f:Function):IFuture 
+		public function onCancel(f:Function):IFuture 
 		{ 
 			assertFutureIsAlive(this)
 			_onCancel.push(f)
@@ -451,7 +460,7 @@ package org.osflash.futures.support
 			return this
 		}
 		
-		public function progress(unit:Number):void
+		public function progress(unit:Number, ...args):void
 		{
 			assertFutureIsAlive(this)
 			dispatch(_onProgress, [unit])

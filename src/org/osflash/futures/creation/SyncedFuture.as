@@ -1,5 +1,6 @@
 package org.osflash.futures.creation
 {
+	import org.osflash.futures.Future;
 	import org.osflash.futures.IFuture;
 	import org.osflash.futures.support.BaseFuture;
 	import org.osflash.futures.support.InstantFuture;
@@ -52,9 +53,9 @@ package org.osflash.futures.creation
 					
 				assertFutureIsAlive(childFuture, 'Caught attempt to sync with a dead future')
 				
-				childFuture.onCompleted(buildOnChildComplete(childFuture))
+				childFuture.onComplete(buildOnChildComplete(childFuture))
 				
-				childFuture.onCancelled(function (...argsFromChild):void {
+				childFuture.onCancel(function (...argsFromChild):void {
 					if(setupComplete)
 					{
 						cancelThis(childFuture, argsFromChild)
@@ -81,6 +82,14 @@ package org.osflash.futures.creation
 			}
 			
 			setupComplete = true
+		}
+		
+		/**
+		 * @inheritDoc
+		 */
+		public function isolate():IFuture
+		{
+			return new Future()
 		}
 		
 		protected function buildOnChildComplete(childFuture:IFuture):Function
@@ -195,9 +204,9 @@ package org.osflash.futures.creation
 		/**
 		 * @inheritDoc 
 		 */
-		public function onCompleted(f:Function):IFuture
+		public function onComplete(f:Function):IFuture
 		{
-			return futureBehvaiour.onCompleted(f)
+			return futureBehvaiour.onComplete(f)
 		}
 		
 		/**
@@ -235,9 +244,9 @@ package org.osflash.futures.creation
 		/**
 		 * @inheritDoc 
 		 */
-		public function onCancelled(f:Function):IFuture
+		public function onCancel(f:Function):IFuture
 		{
-			return futureBehvaiour.onCancelled(f)
+			return futureBehvaiour.onCancel(f)
 		}
 		
 		public function get hasProgressListener():Boolean
@@ -320,7 +329,7 @@ package org.osflash.futures.creation
 		/**
 		 * @inheritDoc 
 		 */
-		public function progress(unit:Number):void
+		public function progress(unit:Number, ...args):void
 		{
 			IFuture(futureBehvaiour).progress(unit)
 		}

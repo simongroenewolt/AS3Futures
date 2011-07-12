@@ -23,29 +23,29 @@ package org.osflash.futures.support
 			
 		}
 		
-		override public function progress(unit:Number):void
+		override public function progress(unit:Number, ...args):void
 		{
 				
 		}
 		
 		override public function beforeComplete(f:Function):IFuture
 		{
-			return onCompleted(f)
+			return onComplete(f)
 		}
 		
 		override public function afterComplete(f:Function):IFuture
 		{
-			return onCompleted(f)
+			return onComplete(f)
 		}
 		
 		override public function beforeCancel(f:Function):IFuture
 		{
-			return onCancelled(f)
+			return onCancel(f)
 		}
 		
 		override public function afterCancel(f:Function):IFuture
 		{
-			return onCancelled(f)
+			return onCancel(f)
 		}
 		
 		override protected function listenToProxyFuture(proxyFuture:BaseFuture):void 

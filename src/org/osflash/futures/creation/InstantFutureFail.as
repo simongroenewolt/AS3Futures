@@ -11,7 +11,7 @@ package org.osflash.futures.creation
 			super(args)
 		}
 		
-		override public function onCancelled(f:Function):IFuture
+		override public function onCancel(f:Function):IFuture
 		{
 			assertListenerArguments(f, args)
 			
@@ -38,7 +38,7 @@ package org.osflash.futures.creation
 			return this
 		}
 		
-		override public function onCompleted(f:Function):IFuture
+		override public function onComplete(f:Function):IFuture
 		{
 			return this
 		}

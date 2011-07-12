@@ -2,6 +2,7 @@ package {
     import flash.display.Sprite;
     import flash.events.FullScreenEvent;
     
+    import org.osflash.futures.Future;
     import org.osflash.futures.IFuture;
     import org.osflash.futures.creation.TypedFuture;
     import org.osflash.futures.creation.instantFail;
@@ -10,6 +11,7 @@ package {
     import org.osflash.futures.creation.timedSuccess;
     import org.osflash.futures.creation.waitOnCritical;
     import org.osflash.futures.support.BaseFuture;
+    import org.osflash.futures.support.isolate;
 
     public class AS3Futures extends Sprite {
 
@@ -19,13 +21,13 @@ package {
 			const argB:String = 'argB'
 			const argC:String = 'argC'
 				
-//			const futureA:Future = new TypedFuture()
-//			const futureB:Future = new TypedFuture()
-//			const futureC:Future = new TypedFuture()	
+			const futureA : IFuture = new Future()
+			const futureB : IFuture = new Future()
+			const futureC : IFuture = new Future()	
 				
-			const futureA:IFuture = timedSuccess(100, argA)
-			const futureB:IFuture = timedSuccess(1000, argB)
-			const futureC:IFuture = timedSuccess(1000, argC)
+//			const futureA:IFuture = timedSuccess(100, argA)
+//			const futureB:IFuture = timedSuccess(1000, argB)
+//			const futureC:IFuture = timedSuccess(1000, argC)
 				
 //			const futureA:Future = timedFail(200, argA)
 //			const futureB:Future = timedFail(200, argB)
@@ -38,6 +40,36 @@ package {
 //			const futureA:Future = instantFail(argA)
 //			const futureB:Future = instantFail(argB)
 //			const futureC:Future = instantFail(argC)
+				
+			const producer:Function = function ():IFuture
+			{
+				return isolate(
+					futureA
+						.onComplete(function (...args):void {
+							trace('Producer onComplete:', args)
+						})
+						.onCancel(function (...args):void {
+							trace('Producer onCancel:', args)
+						})
+				)
+			}
+				
+			const consumer:Function = function ():IFuture
+			{
+				return IFuture(producer())
+					.onComplete(function (...args):void {
+						trace('Consumer onComplete:', args)
+					})
+					.onCancel(function (...args):void {
+						trace('Consumer onCancel:', args)
+					})
+			}
+				
+			consumer()
+//			futureA.complete(argA)
+			futureA.onComplete(function (...args):void { trace('completed:', args) } )
+			futureA.cancel(argA)
+//			futureA.onCancel(function (...args):void { trace('cancelled:', args) } )
 				
 //			const compound:Future = futureA.waitOnCritical(futureB)
 			
@@ -59,10 +91,6 @@ package {
 //			})	
 			
 //			futureA.orElseCompleteWith(<loggingConfig>Moo</loggingConfig>)	
-				
-				
-			futureA.onCompleted(function (...args):void { trace('completed:', args) } )
-			futureA.onCancelled(function (...args):void { trace('cancelled:', args) } )
 				
 //			futureA.complete(argA)
 //			futureB.complete(argB)

@@ -11,6 +11,12 @@ package org.osflash.futures
 		 * @return true if the Future has past due to it beiing completed or cancelled already 
 		 */ 
 		function get isPast():Boolean
+			
+		/**
+		 * Isolate this Future from changes from other parties. Use this to prepare the Future for comsumption 
+		 * @return 
+		 */		
+		function isolate():IFuture
 		
 		/**
 		 * @param callback The function to call with progress data. It's signiture should be function(unit:Number):void.
@@ -28,13 +34,13 @@ package org.osflash.futures
 		 * update all listening functions of the progress of this future
 		 * @param unit
 		 */			
-		function progress(unit:Number):void
+		function progress(unit:Number, ...args):void
 		
 		/**
 		 * @param f the function to call if the Future is satified as complete
 		 * @return the same Future object so method calls can be chained togeter
 		 */		
-		function onCompleted(f:Function):IFuture
+		function onComplete(f:Function):IFuture
 		
 		/**
 		 * @return true if their is at least one listener for completed events 
@@ -59,7 +65,7 @@ package org.osflash.futures
 		 * @param f 
 		 * @return the same Future object so method calls can be chained togeter 
 		 */			
-		function onCancelled(f:Function):IFuture
+		function onCancel(f:Function):IFuture
 			
 		/**
 		 * @return true if their is at least one listener for cancelled 
