@@ -13,11 +13,13 @@ package org.osflash.futures.creation
 			_onComplete:Function,
 			_afterComplete:Function,
 			_mapComplete:Object,
+			completing:Boolean,
 			
 			_onCancel:Function,
 			_afterCancel:Function,
 			_mapCancel:Object,
 			_mapCancelToComplete:Object,
+			cancelling:Boolean,
 			
 			_onProgress:Function,
 			_afterProgress:Function,
@@ -134,6 +136,10 @@ package org.osflash.futures.creation
 		 */
 		public function complete(...args):void
 		{
+			// ignore complete request while still cancelling, this is brute force recursion avoidance
+			if (completing)	
+				return
+			
 			assertThisFutureIsAlive()
 			
 			if (proxyAnd != null && proxyAnd.hasFuture)
@@ -161,6 +167,7 @@ package org.osflash.futures.creation
 			}
 			else
 			{
+				completing = true
 				_isPast = true
 				applyArgsIfExists(_onComplete, args, standardErrorMessage)
 				applyArgsIfExists(_afterComplete, args, standardErrorMessage)
@@ -239,6 +246,10 @@ package org.osflash.futures.creation
 		 */		
 		public function cancel(...args):void
 		{
+			// ignore cancel request while still cancelling, this is brute force recursion avoidance
+			if (cancelling) 
+				return
+			
 			assertThisFutureIsAlive()
 			
 			if (proxyOr != null && proxyOr.hasFuture)
@@ -262,7 +273,8 @@ package org.osflash.futures.creation
 			else if (_mapCancelToComplete != null)
 			{
 				args = map(_mapCancelToComplete, args)
-				complete.apply(null, args) 
+				applyArgs(complete, args, standardErrorMessage)
+				return
 			}
 			
 			if (proxyOr != null && !proxyOr.hasFuture)
@@ -272,6 +284,7 @@ package org.osflash.futures.creation
 			}
 			else
 			{
+				cancelling = true
 				_isPast = true
 				applyArgsIfExists(_onCancel, args, standardErrorMessage)
 				applyArgsIfExists(_afterCancel, args, standardErrorMessage)
