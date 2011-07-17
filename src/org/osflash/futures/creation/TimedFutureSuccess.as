@@ -15,7 +15,7 @@ package org.osflash.futures.creation
 		{
 			return function (e:TimerEvent):void {
 				t.removeEventListener(e.type, arguments.callee)
-				applyArgs(complete, args)
+				complete.apply(null, args)
 			}
 		}
 	}

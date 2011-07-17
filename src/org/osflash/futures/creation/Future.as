@@ -28,11 +28,14 @@ package org.osflash.futures.creation
 			proxyOr:FutureProxy,
 			
 			// isolator listens to me
-			isolator:Future
+			isolator:Future,
+			
+			standardErrorMessage:String
 			
 		public function Future(name:String)
 		{
 			_name = name
+			standardErrorMessage = errorMessage()
 		}
 		
 		public function get name():String
@@ -98,7 +101,7 @@ package org.osflash.futures.creation
 			if (_onProgress != null)
 			{
 				args.unshift(unit)
-				applyArgs(_onProgress, args)
+				applyArgs(_onProgress, args, standardErrorMessage)
 			}
 		}
 		
@@ -159,8 +162,8 @@ package org.osflash.futures.creation
 			else
 			{
 				_isPast = true
-				applyArgsIfExists(_onComplete, args)
-				applyArgsIfExists(_afterComplete, args)
+				applyArgsIfExists(_onComplete, args, standardErrorMessage)
+				applyArgsIfExists(_afterComplete, args, standardErrorMessage)
 				dispose()
 			}
 		}
@@ -184,7 +187,7 @@ package org.osflash.futures.creation
 		
 		protected function createProxyFuture(proxy:FutureProxy, args:Array):IFuture
 		{
-			const proxyFuture:Future = applyArgs(proxy.futureGenerator, args)
+			const proxyFuture:Future = applyArgs(proxy.futureGenerator, args, standardErrorMessage)
 			proxy.future = proxyFuture
 			assertFutureIsAlive(proxyFuture)
 			listenToProxyFuture(proxyFuture)
@@ -239,7 +242,7 @@ package org.osflash.futures.creation
 			assertThisFutureIsAlive()
 			
 			if (proxyOr != null && proxyOr.hasFuture)
-				throw new Error('Future:'+_name+' is already defered to an orElse proxy')
+				throw new Error(errorMessage('is already defered to an orElse proxy'))
 			
 			cancelItern(args)
 		}
@@ -270,8 +273,8 @@ package org.osflash.futures.creation
 			else
 			{
 				_isPast = true
-				applyArgsIfExists(_onCancel, args)
-				applyArgsIfExists(_afterCancel, args)
+				applyArgsIfExists(_onCancel, args, standardErrorMessage)
+				applyArgsIfExists(_afterCancel, args, standardErrorMessage)
 				dispose()
 			}
 		}
@@ -319,7 +322,12 @@ package org.osflash.futures.creation
 		protected function assertNotNull(property:*, message:String):void 
 		{
 			if (property != null)
-				throw new Error('Future:'+_name+' '+message)
+				throw new Error(errorMessage(message))
+		}
+		
+		protected function errorMessage(message:String=''):String
+		{
+			return 'Future:'+_name+' has thrown an Error:'+message+'.'
 		}
 		
 		protected function map(mapper:Object, args:Array):Array

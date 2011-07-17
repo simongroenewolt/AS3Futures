@@ -23,9 +23,9 @@ package {
 //			const futureB : IFuture = new Future()
 //			const futureC : IFuture = new Future()	
 				
-//			const futureA:IFuture = timedSuccess(100, argA)
-//			const futureB:IFuture = timedSuccess(1000, argB)
-//			const futureC:IFuture = timedSuccess(1000, argC)
+			const futureA:IFuture = timedSuccess(argA, 100, argA)
+//			const futureB:IFuture = timedSuccess(argB, 1000, argB)
+//			const futureC:IFuture = timedSuccess(argC, 1000, argC)
 				
 //			const futureA:IFuture = timedFail(200, argA)
 //			const futureB:IFuture = timedFail(200, argB)
@@ -76,12 +76,12 @@ package {
 //				instantSuccess(argC)
 //			)
 				
-			const futureA:IFuture = waitOnCritical(
-				'futureA',
-				timedFail(argA, 2000, argA),
-				timedFail(argB, 500, argB),
-				timedFail(argC, 10, argC)
-			)
+//			const futureA:IFuture = waitOnCritical(
+//				'futureA',
+//				timedFail(argA, 2000, argA),
+//				timedFail(argB, 500, argB),
+//				timedFail(argC, 10, argC)
+//			)
 				
 //			const futureA:IFuture = instantSuccess(argA)
 //				.andThen(function (resultA:String):IFuture {
@@ -89,8 +89,8 @@ package {
 //					return instantSuccess(argB)
 //				})
 			
-			futureA.onComplete(function (...args):void {
-				trace('final complete:', args)
+			futureA.onComplete(function (argA:String, argB:String):void {
+				trace('final complete:')
 			})
 				
 			futureA.onCancel(function (...args):void {

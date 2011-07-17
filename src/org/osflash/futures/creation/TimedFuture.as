@@ -51,7 +51,7 @@ package org.osflash.futures.creation
 		override public function cancel(...args):void
 		{
 			stopTimer()
-			applyArgs(super.cancel, args)
+			applyArgs(super.cancel, args, standardErrorMessage)
 		}
 	}
 }
