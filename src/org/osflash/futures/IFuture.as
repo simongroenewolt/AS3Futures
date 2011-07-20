@@ -14,6 +14,10 @@ package org.osflash.futures
 		 */ 
 		function get isPast():Boolean
 			
+		function get isCancelled():Boolean
+			
+		function get isCompleted():Boolean
+			
 		/**
 		 * Isolate this Future from changes from other parties. Use this to prepare the Future for comsumption 
 		 * @return 

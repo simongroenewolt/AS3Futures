@@ -4,7 +4,7 @@ package org.osflash.futures.creation
 	import org.osflash.functional.applyArgsIfExists;
 	import org.osflash.futures.IFuture;
 	import org.osflash.futures.support.assertFutureIsAlive;
-
+	
 	public class Future implements IFuture
 	{
 		protected var
@@ -62,6 +62,16 @@ package org.osflash.futures.creation
 			return _isPast
 		}
 		
+		public function get isCancelled():Boolean
+		{
+			return cancelling
+		}
+			
+		public function get isCompleted():Boolean
+		{
+			return completing
+		}
+		
 		/**
 		 * @inheritDoc
 		 */
@@ -117,7 +127,7 @@ package org.osflash.futures.creation
 			return this;
 		}
 		
-		protected function afterComplete(f:Function):void
+		internal function afterComplete(f:Function):void
 		{
 			assertNotNull(_afterComplete, 'is already handling afterComplete ')
 			_afterComplete = f
@@ -128,7 +138,7 @@ package org.osflash.futures.creation
 		 */
 		public function get hasCompleteListener():Boolean
 		{
-			return _onComplete != null;
+			return _onComplete != null
 		}
 		
 		/**
@@ -227,7 +237,7 @@ package org.osflash.futures.creation
 			return this;
 		}
 		
-		protected function afterCancel(f:Function):void
+		internal function afterCancel(f:Function):void
 		{
 			assertNotNull(_afterCancel, 'is already handling afterCancel')
 			_afterCancel = f
@@ -238,7 +248,13 @@ package org.osflash.futures.creation
 		 */
 		public function get hasCancelListener():Boolean
 		{
-			return _onCancel != null;
+			return (
+				_onCancel != null
+				||
+				_mapCancelToComplete != null
+				||
+				isolator.hasCancelListener
+			)
 		}
 		
 		/**

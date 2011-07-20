@@ -1,6 +1,5 @@
 package org.osflash.futures.creation
 {
-	import org.osflash.futures.IFuture;
 	import org.osflash.futures.support.assertFutureIsAlive;
 
 	/**
@@ -12,8 +11,7 @@ package org.osflash.futures.creation
 	{
 		protected var
 			argsTotal:Array = [],
-			completesReceived:int = 0,
-			isCancelled:Boolean
+			completesReceived:int = 0
 				
 		protected const
 			futuresToSync:Array = []
@@ -34,23 +32,23 @@ package org.osflash.futures.creation
 			
 			// if any of the sub-futures are cancelled then cancel this future and dispose of them all
 			// attach complete listener to each future
-			forEachChildFuture(function (childFuture:IFuture):void {
+			forEachChildFuture(function (childFuture:Future):void {
 				assertFutureIsAlive(childFuture, 'Caught attempt to sync with a dead future')
 				
-				childFuture.onComplete(buildOnChildComplete(childFuture))
+				childFuture.internal::afterComplete(buildOnChildComplete(childFuture))
 				
-				childFuture.onCancel(function (...argsFromChild):void {
+				childFuture.internal::afterCancel(function (...argsFromChild):void {
 					cancelThis(childFuture, argsFromChild)
 				})
 			})
 		}
 		
-		protected function cancelThis(futureThatCancelled:IFuture, args:Array):void
+		protected function cancelThis(futureThatCancelled:Future, args:Array):void
 		{
-			if(isCancelled == false)
+			if(cancelling == false)
 			{
-				isCancelled = true
-				forEachChildFuture(function (childFuture:IFuture):void {
+				cancelling = true
+				forEachChildFuture(function (childFuture:Future):void {
 					
 					// only cancel a child future if it is not the child that just cancelled
 					if (childFuture != futureThatCancelled && childFuture.isPast == false)
@@ -63,7 +61,7 @@ package org.osflash.futures.creation
 			}
 		}
 		
-		protected function buildOnChildComplete(childFuture:IFuture):Function
+		protected function buildOnChildComplete(childFuture:Future):Function
 		{
 			return function (...args):void {
 				completesReceived++
@@ -73,7 +71,7 @@ package org.osflash.futures.creation
 				if (completesReceived == futuresToSync.length)
 				{
 					// make one array from all the arguments received, in the order the futures were registered in 
-					forEachChildFuture(function (cf:IFuture, argsSaved:Array):void {
+					forEachChildFuture(function (cf:Future, argsSaved:Array):void {
 						argsTotal = argsTotal.concat(argsSaved)
 					})
 					
@@ -82,7 +80,7 @@ package org.osflash.futures.creation
 			}
 		}
 		
-		protected function saveArgs(childFuture:IFuture, args:Array):void 
+		protected function saveArgs(childFuture:Future, args:Array):void 
 		{
 			var blob:Object
 			
@@ -109,7 +107,7 @@ package org.osflash.futures.creation
 			{
 				for (i=0; i<futuresToSync.length; ++i)
 				{
-					const childFuture:IFuture = futuresToSync[i].future
+					const childFuture:Future = futuresToSync[i].future
 					f(childFuture)
 				}
 			}
@@ -130,7 +128,7 @@ package org.osflash.futures.creation
 		{
 			for each (var blob:Object in futuresToSync)
 			{
-				const future:IFuture = blob.future
+				const future:Future = blob.future
 				future.dispose()
 			}
 			

@@ -19,11 +19,11 @@ package {
 			const argB:String = 'argB'
 			const argC:String = 'argC'
 				
-//			const futureA : IFuture = new Future()
-//			const futureB : IFuture = new Future()
-//			const futureC : IFuture = new Future()	
+//			const futureA : IFuture = new Future(argA)
+//			const futureB : IFuture = new Future(argB)
+//			const futureC : IFuture = new Future(argC)	
 				
-			const futureA:IFuture = timedSuccess(argA, 100, argA)
+//			const futureA:IFuture = timedSuccess(argA, 100, argA)
 //			const futureB:IFuture = timedSuccess(argB, 1000, argB)
 //			const futureC:IFuture = timedSuccess(argC, 1000, argC)
 				
@@ -31,13 +31,45 @@ package {
 //			const futureB:IFuture = timedFail(200, argB)
 //			const futureC:IFuture = timedFail(200, argC)
 				
-//			const futureA:IFuture = instantSuccess(argA)
-//			const futureB:IFuture = instantSuccess(argB)
-//			const futureC:IFuture = instantSuccess(argC)
+//			const futureA:IFuture = instantFail(argA, argA)
+//			const futureB:IFuture = instantFail(argB, argB)
+//			const futureC:IFuture = instantSuccess(argC, argC)
+			
+			// producer
+//			futureA
+//				.orThen(function (argA:String):IFuture {
+//					return instantSuccess(argB, argB)
+//						.mapComplete(function (argB:String):Array {
+//							return [argA, argB]
+//						})
+//				})
+//					
+//			futureA
+//				.orThen (argA:String) => 
+//					instantSuccess(argB, argB)
+//						.mapComplete (argB:String) => [argA, argB]
 				
+			const futureA:IFuture = waitOnCritical(
+				'futureA',
+				instantSuccess(argA, argA),
+				instantFail(argB, argB).orElseCompleteWith(<default/>),
+				instantSuccess(argC, argC)
+			)
+			
+			// client 		
+			futureA.onComplete(function (argA:String, argB:String, argC:String):void {
+				trace('final complete:')
+			})
+			
+			futureA.onCancel(function (...args):void {
+				trace('final cancel:', args)
+			})		
+					
 //			const futureA:IFuture = instantFail(argA, argB)
 //			const futureB:IFuture = instantFail(argB)
 //			const futureC:IFuture = instantFail(argC)
+				
+				
 				
 //			const producer:Function = function ():IFuture
 //			{
@@ -88,14 +120,6 @@ package {
 //					trace('ANDING')
 //					return instantSuccess(argB)
 //				})
-			
-			futureA.onComplete(function (argA:String, argB:String):void {
-				trace('final complete:')
-			})
-				
-			futureA.onCancel(function (...args):void {
-				trace('final cancel:', args)
-			})
 			
 //			futureA.complete(argA)
 //			futureA.onComplete(function (...args):void { trace('completed:', args) } )
