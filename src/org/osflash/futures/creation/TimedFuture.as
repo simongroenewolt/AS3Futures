@@ -13,8 +13,9 @@ package org.osflash.futures.creation
 			callback:Function,
 			_duration:int
 			
-		public function TimedFuture(duration:int, args:Array)
+		public function TimedFuture(name:String, duration:int, args:Array)
 		{
+			super(name)
 			_duration = duration
 			t = new Timer(duration, 1)
 			callback = buildCallback(duration, args)

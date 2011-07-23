@@ -7,6 +7,8 @@ package org.osflash.futures
 	 */	
 	public interface IFuture
 	{
+		function get name():String
+			
 		/**
 		 * @return true if the Future has past due to it beiing completed or cancelled already 
 		 */ 
@@ -118,7 +120,7 @@ package org.osflash.futures
 		 * @param otherFutures the other Futures to wait on
 		 * @return the compound Future that represents a group of Futures
 		 */			
-		function waitOnCritical(...otherFutures):IFuture
+		function waitOnCritical(name:String, ...otherFutures):IFuture
 		
 		function dispose():void
 	}

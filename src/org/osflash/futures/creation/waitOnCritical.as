@@ -1,10 +1,11 @@
 package org.osflash.futures.creation 
 {
+	import org.osflash.functional.applyArgs;
 	import org.osflash.futures.IFuture;
 
-	public function waitOnCritical(...futures):IFuture
+	public function waitOnCritical(name:String, ...futures):IFuture
 	{
 		const first:IFuture = futures.shift()
-		return first.waitOnCritical.apply(null, futures)
+		return applyArgs(first.waitOnCritical, [name].concat(futures))
 	}
 }

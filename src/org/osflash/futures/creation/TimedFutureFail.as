@@ -6,9 +6,9 @@ package org.osflash.futures.creation
 	
 	public class TimedFutureFail extends TimedFuture
 	{
-		public function TimedFutureFail(duration:int, args:Array)
+		public function TimedFutureFail(name:String, duration:int, args:Array)
 		{
-			super(duration, args)
+			super(name, duration, args)
 		}
 		
 		override protected function buildCallback(duration:int, args:Array):Function

@@ -8,6 +8,8 @@ package org.osflash.futures.creation
 	public class Future implements IFuture
 	{
 		protected var
+			_name:String, // for debugging
+		
 			_onComplete:Function,
 			_afterComplete:Function,
 			_mapComplete:Object,
@@ -19,7 +21,7 @@ package org.osflash.futures.creation
 			
 			_onProgress:Function,
 			_afterProgress:Function,
-			_isPast:Boolean,
+			_isPast:Boolean, // true if the future has already happened (ended with either completed or cancel)
 			
 			// I listen to the proxy
 			proxyAnd:FutureProxy,
@@ -27,6 +29,16 @@ package org.osflash.futures.creation
 			
 			// isolator listens to me
 			isolator:Future
+			
+		public function Future(name:String)
+		{
+			_name = name
+		}
+		
+		public function get name():String
+		{
+			return _name
+		}
 		
 		/**
 		 * @inheritDoc
@@ -50,8 +62,8 @@ package org.osflash.futures.creation
 		 */
 		public function isolate():IFuture
 		{
-			assertAll(isolator, 'Isolate has already been called on this Future')
-			isolator = new Future()
+			assertAll(isolator, 'is already isolated')
+			isolator = new Future(_name+'-isolated')
 				
 //			isolator.afterComplete(complete)
 //			isolator.afterCancel(cancel)
@@ -66,7 +78,7 @@ package org.osflash.futures.creation
 		 */
 		public function onProgress(f:Function):IFuture
 		{
-			assertAll(_onComplete, 'onProgress is already being handled')
+			assertAll(_onComplete, 'is already handling onProgress')
 			_onProgress = f;
 			return this;
 		}
@@ -95,14 +107,14 @@ package org.osflash.futures.creation
 		 */
 		public function onComplete(f:Function):IFuture
 		{
-			assertAll(_onComplete, 'onComplete is already being handled')
+			assertAll(_onComplete, 'is already handling onComplete')
 			_onComplete = f
 			return this;
 		}
 		
 		protected function afterComplete(f:Function):void
 		{
-			assertNotNull(_afterComplete, 'onComplete is already being handled')
+			assertNotNull(_afterComplete, 'is already handling afterComplete ')
 			_afterComplete = f
 		}
 		
@@ -122,7 +134,7 @@ package org.osflash.futures.creation
 			assertThisFutureIsAlive()
 			
 			if (proxyAnd != null && proxyAnd.hasFuture)
-				throw new Error('This future has been defered to an andThen proxy')
+				throw new Error('Future:'+_name+' is already defered to an andThen proxy')
 			
 			completeItern(args)
 		}
@@ -158,14 +170,14 @@ package org.osflash.futures.creation
 		 */
 		public function mapComplete(funcOrObject:Object):IFuture
 		{
-			assertAll(_mapComplete, 'mapComplete is already being handled')
+			assertAll(_mapComplete, 'is already handling mapComplete')
 			_mapComplete = funcOrObject
 			return this;
 		}
 		
 		public function andThen(futureGenerator:Function):IFuture
 		{
-			assertAll(proxyAnd, 'andThen is already being handled')
+			assertAll(proxyAnd, 'is already handling andThen')
 			proxyAnd = new FutureProxy(futureGenerator)
 			return this
 		}
@@ -200,14 +212,14 @@ package org.osflash.futures.creation
 		 */
 		public function onCancel(f:Function):IFuture
 		{
-			assertAll(_onCancel, 'onCancel is already being handled')
+			assertAll(_onCancel, 'is already handling onCancel')
 			_onCancel = f
 			return this;
 		}
 		
 		protected function afterCancel(f:Function):void
 		{
-			assertNotNull(_afterCancel, 'onComplete is already being handled')
+			assertNotNull(_afterCancel, 'is already handling afterCancel')
 			_afterCancel = f
 		}
 		
@@ -227,7 +239,7 @@ package org.osflash.futures.creation
 			assertThisFutureIsAlive()
 			
 			if (proxyOr != null && proxyOr.hasFuture)
-				throw new Error('This future has been defered to an orElse proxy')
+				throw new Error('Future:'+_name+' is already defered to an orElse proxy')
 			
 			cancelItern(args)
 		}
@@ -269,30 +281,28 @@ package org.osflash.futures.creation
 		 */
 		public function mapCancel(funcOrObject:Object):IFuture
 		{
-			assertNotNull(_onComplete, 'onCancel is already being handled')
+			assertNotNull(_mapCancel, 'is already handling mapCancel')
 			return null;
 		}
 		
 		public function orThen(futureGenerator:Function):IFuture
 		{
-			assertAll(proxyOr, 'orThen is already being handled')
+			assertAll(proxyOr, 'is already handling orThen')
 			proxyOr = new FutureProxy(futureGenerator)
 			return this
 		}
 		
 		public function orElseCompleteWith(funcOrObject:Object):IFuture
 		{
-			if (_mapCancelToComplete != null)
-				throw new Error('This Future already has a orElseCompleteWith/mapCancelToComplete set')
-			
+			assertNotNull(_mapCancelToComplete, 'is already handling orElseCompleteWith/mapCancelToComplete')
 			_mapCancelToComplete = funcOrObject
 			return this
 		}
 		
-		public function waitOnCritical(...otherFutures):IFuture
+		public function waitOnCritical(name:String, ...otherFutures):IFuture
 		{
 			otherFutures.unshift(this)
-			return new SyncedFuture(otherFutures)
+			return new SyncedFuture(name, otherFutures)
 		}
 		
 		protected function assertAll(property:*, message:String):void
@@ -309,7 +319,7 @@ package org.osflash.futures.creation
 		protected function assertNotNull(property:*, message:String):void 
 		{
 			if (property != null)
-				throw new Error(message)
+				throw new Error('Future:'+_name+' '+message)
 		}
 		
 		protected function map(mapper:Object, args:Array):Array

@@ -9,7 +9,6 @@ package {
     import org.osflash.futures.creation.timedFail;
     import org.osflash.futures.creation.timedSuccess;
     import org.osflash.futures.creation.waitOnCritical;
-    import org.osflash.futures.support.BaseFuture;
     import org.osflash.futures.support.isolate;
 
     public class AS3Futures extends Sprite {
@@ -78,9 +77,10 @@ package {
 //			)
 				
 			const futureA:IFuture = waitOnCritical(
-				timedFail(2000, argA),
-				timedFail(500, argB),
-				timedFail(10, argC)
+				'futureA',
+				timedFail(argA, 2000, argA),
+				timedFail(argB, 500, argB),
+				timedFail(argC, 10, argC)
 			)
 				
 //			const futureA:IFuture = instantSuccess(argA)

@@ -18,8 +18,9 @@ package org.osflash.futures.creation
 		protected const
 			futuresToSync:Array = []
 				
-		public function SyncedFuture(syncThese:Array)
+		public function SyncedFuture(name:String, syncThese:Array)
 		{
+			super(name)
 			var i:int=0
 				
 			// we want to store the future in an 2-tuple object so we can easily associate arguments that come in from complete callback later

@@ -8,7 +8,7 @@ package org.osflash.futures.support
 	 */
 	public function assertFutureIsAlive(future:IFuture, message:String=null):void 
 	{
-		message = message || 'future is past, move on, stop trying to relive it'
+		message = message || "Future:"+future.name+" is past, you can't go back to the future"
 		if (future.isPast) 
 			throw new Error(message)
 	}
