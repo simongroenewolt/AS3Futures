@@ -4,16 +4,11 @@ package org.osflash.futures
 
 	public class InstantFutureSuccessTest extends SuccessTestsBase
 	{
-		[Before]
-		public function setup():void 
+		public function InstantFutureSuccessTest() 
 		{
 			buildFutureSuccess = function (...args):IFuture {
 				return instantSuccess.apply(null, args)
 			}
-			
-			futureA = buildFutureSuccess(argASuccess)
-			futureB = buildFutureSuccess(argBSuccess)
-			futureC = buildFutureSuccess(argCSuccess)
 		}
 	}
 }

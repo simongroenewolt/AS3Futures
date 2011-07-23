@@ -3,7 +3,7 @@ package org.osflash.futures
 	import flash.utils.Proxy;
 	import flash.utils.flash_proxy;
 	
-	public class FutureProxy implements FutureProgressable
+	public class FutureProxy implements IFuture
 	{
 		protected var 
 			future:IFuture,
@@ -33,7 +33,7 @@ package org.osflash.futures
 			}
 		}
 		
-		public function onCompleted(f:Function):IFuture
+		public function onComplete(f:Function):IFuture
 		{
 			return proxy('onCompleted', [f])
 		}
@@ -65,7 +65,7 @@ package org.osflash.futures
 			return proxy('mapComplete', [funcOrObject])
 		}
 		
-		public function onCancelled(f:Function):IFuture
+		public function onCancel(f:Function):IFuture
 		{
 			return proxy('onCancelled', [f])
 		}
@@ -114,14 +114,35 @@ package org.osflash.futures
 			return proxy('waitOnCritical', otherFutures)
 		}
 		
-		public function onProgress(callback:Function):FutureProgressable // unit:Number
+		public function get hasProgressListener():Boolean
+		{
+			return proxy('hasProgressListener', [])
+		}
+		
+		public function get hasCompleteListener():Boolean
+		{
+			return proxy('hasCompleteListener', [])
+		}
+		
+		public function get hasCancelListener():Boolean
+		{
+			return proxy('hasCancelListener', [])
+		}
+		
+		public function onProgress(callback:Function):IFuture // unit:Number
 		{
 			return proxy('onProgress', [callback])
 		}
-			
-		public function progress(unit:Number):void
+		
+		public function isolate():IFuture
 		{
-			FutureProgressable(future).progress(unit)
+			return proxy('isolate', [])
+		}
+			
+		public function progress(unit:Number, ...args):void
+		{
+			args.unshift(unit)
+			proxy('progress', args)
 		}
 		
 		public function dispose():void

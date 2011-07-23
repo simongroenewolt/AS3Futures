@@ -19,8 +19,8 @@ package org.osflash.futures.support
 			futures[futureToWatch] = futureToWatch
 				
 			const dispose:Function = disposeFuture(futureToWatch) 
-			futureToWatch.onCompleted(dispose)
-			futureToWatch.onCancelled(dispose)
+			futureToWatch.onComplete(dispose)
+			futureToWatch.onCancel(dispose)
 				
 			return futureToWatch
 		}

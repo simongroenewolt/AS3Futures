@@ -1,7 +1,7 @@
 package org.osflash.futures
 {
 	import asunit.framework.IAsync;
-	import org.osflash.futures.creation.TypedFuture;
+	import org.osflash.futures.creation.Future;
 
 	public class LifetimeTests
 	{
@@ -11,7 +11,7 @@ package org.osflash.futures
 		[Test(expects="Error")]
 		public function shouldFailDueToMultiComplete():void
 		{
-			const future:IFuture = new TypedFuture()
+			const future:IFuture = new Future()
 			future.cancel()
 			future.cancel()
 		}
@@ -19,19 +19,19 @@ package org.osflash.futures
 		[Test(expects="Error")]
 		public function shouldFailDueToMultiCancel():void
 		{
-			const future:IFuture = new TypedFuture()
+			const future:IFuture = new Future()
 			future.complete()
 			future.complete()
 		}
 		
-		[Test]
-		public function compoundCancel():void
-		{
-			const futureA:IFuture = new TypedFuture()
-			const futureB:IFuture = new TypedFuture()
-			const futureAB:IFuture = futureA.waitOnCritical(futureB)
-			
-			futureAB.cancel()
-		}
+//		[Test]
+//		public function compoundCancel():void
+//		{
+//			const futureA:IFuture = new Future()
+//			const futureB:IFuture = new Future()
+//			const futureAB:IFuture = futureA.waitOnCritical(futureB)
+//			
+//			futureAB.cancel()
+//		}
 	}
 }

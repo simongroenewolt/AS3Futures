@@ -1,36 +1,22 @@
 package org.osflash.futures.creation
 {
 	import flash.events.TimerEvent;
-	import flash.utils.Timer;
 	
-	import org.osflash.futures.support.BaseFuture;
-	import org.osflash.futures.support.FutureFail;
-	import org.osflash.futures.support.assertFutureIsAlive;
+	import org.osflash.futures.support.applyArgs;
 
-	public class TimedFutureFail extends BaseFuture
+	public class TimedFutureFail extends TimedFuture
 	{
-		protected var 
-			t:Timer,
-			callback:Function
-		
 		public function TimedFutureFail(duration:int, args:Array)
 		{
-			t = new Timer(duration, 1)
-			callback = function (e:TimerEvent):void {
-				t.removeEventListener(e.type, arguments.callee)
-				cancelItern(_onCancel, args)
-			}
-				
-			t.addEventListener(TimerEvent.TIMER, callback)
-			t.start()
+			super(duration, args)
 		}
 		
-		override public function complete(...args):void
+		override protected function buildCallback(duration:int, args:Array):Function
 		{
-			assertFutureIsAlive(this)
-			t.stop()
-			t.removeEventListener(TimerEvent.TIMER, callback)
-			super.complete.apply(null, args)
+			return function (e:TimerEvent):void {
+				t.removeEventListener(e.type, arguments.callee)
+				applyArgs(cancel, args)
+			}
 		}
 	}
 }

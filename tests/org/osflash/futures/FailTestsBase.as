@@ -9,8 +9,8 @@ package org.osflash.futures
 		{
 			const future:IFuture = buildFutureFail()
 			
-			future.onCompleted(failCallback)
-			future.onCancelled(async(emptyCallback))
+			future.onComplete(failCallback)
+			future.onCancel(async(emptyCallback))
 		}
 		
 		[Test]
@@ -18,8 +18,8 @@ package org.osflash.futures
 		{
 			const future:IFuture = buildFutureFail('arg', [1, 2])
 			
-			future.onCompleted(failCallback)
-			future.onCancelled(async(function (a:String, b:Array):void {}))
+			future.onComplete(failCallback)
+			future.onCancel(async(function (a:String, b:Array):void {}))
 		}
 		
 //		[Test(expects="ArgumentError")]
@@ -27,8 +27,8 @@ package org.osflash.futures
 //		{
 //			const future:Future = buildFutureFail('arg', [1 ,2])
 //			
-//			future.onCompleted(failCallback)
-//			future.onCancelled(async(function (a:String):void {}))
+//			future.onComplete(failCallback)
+//			future.onCancel(async(function (a:String):void {}))
 //		}
 		
 		[Test]
@@ -39,9 +39,9 @@ package org.osflash.futures
 					return futureB
 				})
 			
-			futureA.onCompleted(buildFail("futureA can never succeed, it's a sequence of fail Futures"))
+			futureA.onComplete(buildFail("futureA can never succeed, it's a sequence of fail Futures"))
 			
-			futureA.onCancelled(async(function (result:String):void {
+			futureA.onCancel(async(function (result:String):void {
 				assertEquals(argBFail, result)
 			}))
 		}
@@ -57,9 +57,9 @@ package org.osflash.futures
 						})
 				})
 			
-			futureA.onCompleted(buildFail("futureA can never succeed, it's a sequence of fail Futures"))
+			futureA.onComplete(buildFail("futureA can never succeed, it's a sequence of fail Futures"))
 			
-			futureA.onCancelled(async(function (result:String):void {
+			futureA.onCancel(async(function (result:String):void {
 				assertEquals(argCFail, result)
 			}))
 		}
@@ -75,9 +75,9 @@ package org.osflash.futures
 						})
 				})
 			
-			futureA.onCompleted(buildFail("futureA can never succeed, it's a sequence of fail Futures"))
+			futureA.onComplete(buildFail("futureA can never succeed, it's a sequence of fail Futures"))
 			
-			futureA.onCancelled(async(function (result:String):void {
+			futureA.onCancel(async(function (result:String):void {
 				assertEquals(argAFail, result)
 			}))
 		}
@@ -93,9 +93,9 @@ package org.osflash.futures
 						})
 				})
 			
-			futureA.onCompleted(buildFail("futureA can never succeed, it's a sequence of fail Futures"))
+			futureA.onComplete(buildFail("futureA can never succeed, it's a sequence of fail Futures"))
 			
-			futureA.onCancelled(async(function (result:String):void {
+			futureA.onCancel(async(function (result:String):void {
 				assertEquals(argBFail, result)
 			}))
 		}

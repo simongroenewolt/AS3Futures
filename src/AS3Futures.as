@@ -2,9 +2,8 @@ package {
     import flash.display.Sprite;
     import flash.events.FullScreenEvent;
     
-    import org.osflash.futures.Future;
     import org.osflash.futures.IFuture;
-    import org.osflash.futures.creation.TypedFuture;
+    import org.osflash.futures.creation.Future;
     import org.osflash.futures.creation.instantFail;
     import org.osflash.futures.creation.instantSuccess;
     import org.osflash.futures.creation.timedFail;
@@ -21,57 +20,89 @@ package {
 			const argB:String = 'argB'
 			const argC:String = 'argC'
 				
-			const futureA : IFuture = new Future()
-			const futureB : IFuture = new Future()
-			const futureC : IFuture = new Future()	
+//			const futureA : IFuture = new Future()
+//			const futureB : IFuture = new Future()
+//			const futureC : IFuture = new Future()	
 				
 //			const futureA:IFuture = timedSuccess(100, argA)
 //			const futureB:IFuture = timedSuccess(1000, argB)
 //			const futureC:IFuture = timedSuccess(1000, argC)
 				
-//			const futureA:Future = timedFail(200, argA)
-//			const futureB:Future = timedFail(200, argB)
-//			const futureC:Future = timedFail(200, argC)
+//			const futureA:IFuture = timedFail(200, argA)
+//			const futureB:IFuture = timedFail(200, argB)
+//			const futureC:IFuture = timedFail(200, argC)
 				
-//			const futureA:Future = instantSuccess(argA)
-//			const futureB:Future = instantSuccess(argB)
-//			const futureC:Future = instantSuccess(argC)
+//			const futureA:IFuture = instantSuccess(argA)
+//			const futureB:IFuture = instantSuccess(argB)
+//			const futureC:IFuture = instantSuccess(argC)
 				
-//			const futureA:Future = instantFail(argA)
-//			const futureB:Future = instantFail(argB)
-//			const futureC:Future = instantFail(argC)
+//			const futureA:IFuture = instantFail(argA, argB)
+//			const futureB:IFuture = instantFail(argB)
+//			const futureC:IFuture = instantFail(argC)
 				
-			const producer:Function = function ():IFuture
-			{
-				return isolate(
-					futureA
-						.onComplete(function (...args):void {
-							trace('Producer onComplete:', args)
-						})
-						.onCancel(function (...args):void {
-							trace('Producer onCancel:', args)
-						})
-				)
-			}
+//			const producer:Function = function ():IFuture
+//			{
+//				return isolate(
+//					futureA
+//						.onComplete(function (...args):void {
+//							trace('Producer onComplete:', args)
+//						})
+//						.onCancel(function (...args):void {
+//							trace('Producer onCancel:', args)
+//						})
+//				)
+//			}
+//				
+//			const consumer:Function = function ():IFuture
+//			{
+//				return IFuture(producer())
+//					.onComplete(function (...args):void {
+//						trace('Consumer onComplete:', args)
+//					})
+//					.onCancel(function (...args):void {
+//						trace('Consumer onCancel:', args)
+//					})
+//			}
+//				
+//			consumer()
+			
+//			futureA
+//				.andThen(function (resultA:String):IFuture {
+//					return instantSuccess(argB)
+//				})
+			
+//			const fA:IFuture = waitOnCritical(
+//				instantSuccess(argA),
+//				instantSuccess(argB),
+//				instantSuccess(argC)
+//			)
 				
-			const consumer:Function = function ():IFuture
-			{
-				return IFuture(producer())
-					.onComplete(function (...args):void {
-						trace('Consumer onComplete:', args)
-					})
-					.onCancel(function (...args):void {
-						trace('Consumer onCancel:', args)
-					})
-			}
+			const futureA:IFuture = waitOnCritical(
+				timedFail(2000, argA),
+				timedFail(500, argB),
+				timedFail(10, argC)
+			)
 				
-			consumer()
+//			const futureA:IFuture = instantSuccess(argA)
+//				.andThen(function (resultA:String):IFuture {
+//					trace('ANDING')
+//					return instantSuccess(argB)
+//				})
+			
+			futureA.onComplete(function (...args):void {
+				trace('final complete:', args)
+			})
+				
+			futureA.onCancel(function (...args):void {
+				trace('final cancel:', args)
+			})
+			
 //			futureA.complete(argA)
-			futureA.onComplete(function (...args):void { trace('completed:', args) } )
-			futureA.cancel(argA)
+//			futureA.onComplete(function (...args):void { trace('completed:', args) } )
+//			futureA.cancel(argA)
 //			futureA.onCancel(function (...args):void { trace('cancelled:', args) } )
 				
-//			const compound:Future = futureA.waitOnCritical(futureB)
+//			const compound:IFuture = futureA.waitOnCritical(futureB)
 			
 //			futureA.andThen(function (resultA:String):IFuture {
 //				trace('resultA:', resultA)
@@ -82,11 +113,11 @@ package {
 //					})
 //			})
 				
-//			compound.onCompleted(function (result:String):void {
+//			compound.onComplete(function (result:String):void {
 //				trace('ONCOMPLETE:', result)
 //			})
 //				
-//			compound.onCancelled(function (result:String):void {
+//			compound.onCancel(function (result:String):void {
 //				trace('ONCANCEL:', result)
 //			})	
 			
@@ -96,14 +127,14 @@ package {
 //			futureB.complete(argB)
 //			futureA.cancel(argA)
 				
-//			const compound:Future = futureA.waitOnCritical(
+//			const compound:IFuture = futureA.waitOnCritical(
 //				futureB
 //				// .mapComplete(function (resultB:String):String {
 //				// return resultB + "mapped"
 //				// })
 //			)
 				
-//			compound.onCompleted(function (...args):void {
+//			compound.onComplete(function (...args):void {
 //				trace('args:', args)
 //			})	
         }

@@ -49,9 +49,9 @@ package org.osflash.futures
 		[After]
 		public function dispose():void
 		{
-			futureA.dispose()
-			futureB.dispose()
-			futureC.dispose()
+//			futureA.dispose()
+//			futureB.dispose()
+//			futureC.dispose()
 		}
 		
 //		[Test]
@@ -66,7 +66,7 @@ package org.osflash.futures
 //					return futureB
 //				}))
 //					
-//			futureA.onCompleted(async(function (result:String):void {
+//			futureA.onComplete(async(function (result:String):void {
 //				assertMatches(/^argB/, result)
 //			}))
 //		}

@@ -4,7 +4,7 @@ package org.osflash.futures.support
 	import flash.events.TimerEvent;
 	import flash.utils.Timer;
 	
-	import org.osflash.futures.Future;
+	import org.osflash.futures.creation.Future;
 	import org.osflash.futures.IFuture;
 	import org.osflash.futures.creation.SyncedFuture;
 	import org.osflash.futures.creation.instantFail;

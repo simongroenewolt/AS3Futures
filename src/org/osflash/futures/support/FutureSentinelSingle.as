@@ -19,8 +19,8 @@ package org.osflash.futures.support
 			}
 			
 			future = futureToWatch
-			future.onCompleted(disposeFuture)
-			future.onCancelled(disposeFuture)
+			future.onComplete(disposeFuture)
+			future.onCancel(disposeFuture)
 			
 			return futureToWatch
 		}

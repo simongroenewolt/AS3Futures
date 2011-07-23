@@ -4,6 +4,6 @@ package org.osflash.futures.creation
 
 	public function instantSuccess(...args):IFuture 
 	{
-		return new TimedFutureSuccess(0, args)
+		return new TimedFutureSuccess(1, args)
 	}
 }

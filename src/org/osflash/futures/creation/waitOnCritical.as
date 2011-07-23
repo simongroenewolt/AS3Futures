@@ -4,14 +4,7 @@ package org.osflash.futures.creation
 
 	public function waitOnCritical(...futures):IFuture
 	{
-		var compoundFuture:IFuture = futures[0]
-		
-//		for (var i:int=1; i<futures.length; ++i)
-//		{
-//			var future:Future = futures[i]
-//			compoundFuture = compoundFuture.waitOnCritical(future)
-//		}
-		
-		return compoundFuture
+		const first:IFuture = futures.shift()
+		return first.waitOnCritical.apply(null, futures)
 	}
 }

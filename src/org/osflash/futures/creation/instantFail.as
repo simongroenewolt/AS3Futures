@@ -4,6 +4,6 @@ package org.osflash.futures.creation
 
 	public function instantFail(...args):IFuture 
 	{
-		return new TimedFutureFail(0, args)
+		return new TimedFutureFail(1, args)
 	}
 }
