@@ -2,8 +2,8 @@ package org.osflash.futures.creation
 {
 	import flash.events.TimerEvent;
 	
-	import org.osflash.futures.support.applyArgs;
-
+	import org.osflash.functional.applyArgs;
+	
 	public class TimedFutureSuccess extends TimedFuture
 	{
 		public function TimedFutureSuccess(duration:int, args:Array)

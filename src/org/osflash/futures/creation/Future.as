@@ -1,8 +1,8 @@
 package org.osflash.futures.creation
 {
+	import org.osflash.functional.applyArgs;
+	import org.osflash.functional.applyArgsIfExists;
 	import org.osflash.futures.IFuture;
-	import org.osflash.futures.support.applyArgs;
-	import org.osflash.futures.support.applyArgsIfExists;
 	import org.osflash.futures.support.assertFutureIsAlive;
 
 	public class Future implements IFuture

@@ -3,7 +3,7 @@ package org.osflash.futures.creation
 	import flash.events.TimerEvent;
 	import flash.utils.Timer;
 	
-	import org.osflash.futures.support.applyArgs;
+	import org.osflash.functional.applyArgs;
 	import org.osflash.futures.support.assertFutureIsAlive;
 
 	public class TimedFuture extends Future

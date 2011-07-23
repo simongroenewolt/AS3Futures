@@ -26,50 +26,84 @@ require 'asunit4'
 ##############################
 # Debug
 
-# Compile the debug swf
-mxmlc "bin/AS3Futures-debug.swf" do |t|
-  t.input = "src/AS3Futures.as"
-  t.debug = true
+MAIN_CLASS = 'AS3Futures'
+
+BUILD_DIR = "bin"
+SWC = "#{BUILD_DIR}/#{MAIN_CLASS}.swc"
+SWF_DEBUG = "#{BUILD_DIR}/#{MAIN_CLASS}-debug.swf"
+SWF_TEST = "#{BUILD_DIR}/#{MAIN_CLASS}-test.swf"
+
+SRC_DIR = "src"
+SRC_PACKAGE_DIR = "#{SRC_DIR}/org"
+SRC_MAIN_FILE = "#{SRC_DIR}/#{MAIN_CLASS}.as"
+
+TEST_SRC_DIR = "test"
+TEST_SRC_MAIN_FILE =  "#{SRC_DIR}/#{MAIN_CLASS}Runner.as"
+
+LIB_DIR = "lib"
+DOCS_DIR = "docs"
+
+def with(value)
+  yield(value)
 end
 
-desc "Compile and run the debug swf"
-flashplayer :run => "bin/AS3Futures-debug.swf"
+with(SWF_DEBUG) do |file|  
+  # Compile the debug swf
+  mxmlc file do |t|
+    t.input = SRC_MAIN_FILE
+    t.source_path << SRC_DIR
+    t.library_path << LIB_DIR
+    t.debug = true
+  end
+  
+  desc "Compile and run the debug swf"
+  flashplayer :run => file
+  
+end
 
 ##############################
 # Test
 
 library :asunit4
 
-# Compile the test swf
-mxmlc "bin/AS3Futures-test.swf" => :asunit4 do |t|
-  t.input = "src/AS3FuturesRunner.as"
-  t.source_path << 'tests'
-  t.debug = true
+with (SWF_TEST) do |file|
+    # Compile the test swf
+  mxmlc file => :asunit4 do |t|
+    t.input = TEST_SRC_MAIN_FILE
+    t.source_path << TEST_SRC_DIR
+    t.source_path << SRC_DIR
+    t.library_path << LIB_DIR
+    t.debug = true
+  end
+  
+  desc "Compile and run the test swf"
+  flashplayer :test => file
+  
 end
-
-desc "Compile and run the test swf"
-flashplayer :test => "bin/AS3Futures-test.swf"
 
 ##############################
 # SWC
 
-compc "bin/AS3Futures.swc" do |t|
-  t.input_class = "AS3Futures"
-  t.source_path << 'src'
-  t.include_sources << 'src/org'
+with(SWC) do |file|
+  compc file do |t|
+    t.input_class = MAIN_CLASS
+    t.source_path << SRC_DIR
+    t.library_path << LIB_DIR
+    t.include_sources << SRC_PACKAGE_DIR
+  end
+  
+  desc "Compile the SWC file"
+  task :swc => file
+  
 end
-
-desc "Compile the SWC file"
-task :swc => 'bin/AS3Futures.swc'
-
 ##############################
 # DOC
 
 desc "Generate documentation at doc/"
 asdoc 'doc' => :swc do |t|
-  t.doc_sources << "src"
-  t.exclude_sources << "src/AS3Futures.as"
-  t.exclude_sources << "src/AS3FuturesRunner.as"
+  t.doc_sources << SRC_DIR
+  t.exclude_sources << SRC_MAIN_FILE
+  t.exclude_sources << TEST_SRC_MAIN_FILE
 end
 
 ##############################
