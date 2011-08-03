@@ -1,5 +1,6 @@
 package org.osflash.futures.creation
 {
+	import org.osflash.functional.applyArgs;
 	import org.osflash.futures.support.assertFutureIsAlive;
 
 	/**
@@ -38,26 +39,34 @@ package org.osflash.futures.creation
 				childFuture.internal::afterComplete(buildOnChildComplete(childFuture))
 				
 				childFuture.internal::afterCancel(function (...argsFromChild):void {
-					cancelThis(childFuture, argsFromChild)
+					applyArgs(cancel, argsFromChild)
 				})
 			})
 		}
 		
-		protected function cancelThis(futureThatCancelled:Future, args:Array):void
+		override public function complete(...args):void
 		{
+			applyArgs(super.complete, args)
+			
+			forEachChildFuture(function (childFuture:Future):void {
+				applyArgs(childFuture.complete, args)
+			})
+		}
+		
+		override public function cancel(...args):void
+		{ 
 			if(cancelling == false)
 			{
-				cancelling = true
+				applyArgs(super.cancel, args)
+				
 				forEachChildFuture(function (childFuture:Future):void {
 					
 					// only cancel a child future if it is not the child that just cancelled
-					if (childFuture != futureThatCancelled && childFuture.isPast == false)
+					if (childFuture.isPast == false)
 					{
-						childFuture.cancel.apply(null, args)
+						applyArgs(childFuture.cancel, args)
 					}
 				})
-			
-				cancel.apply(null, args)
 			}
 		}
 		

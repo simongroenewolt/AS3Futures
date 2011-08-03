@@ -251,9 +251,11 @@ package org.osflash.futures.creation
 			return (
 				_onCancel != null
 				||
+				_afterCancel != null
+				||
 				_mapCancelToComplete != null
 				||
-				isolator.hasCancelListener
+				(isolator && isolator.hasCancelListener)
 			)
 		}
 		
@@ -263,7 +265,7 @@ package org.osflash.futures.creation
 		public function cancel(...args):void
 		{
 			// ignore cancel request while still cancelling, this is brute force recursion avoidance
-			if (cancelling) 
+			if (cancelling)
 				return
 			
 			assertThisFutureIsAlive()
@@ -356,7 +358,7 @@ package org.osflash.futures.creation
 		
 		protected function errorMessage(message:String=''):String
 		{
-			return 'Future:'+_name+' has thrown an Error:'+message+'.'
+			return "Future:"+_name+" has thrown an Error:\n\t"+message
 		}
 		
 		protected function map(mapper:Object, args:Array):Array
