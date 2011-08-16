@@ -134,5 +134,13 @@ package org.osflash.futures.creation
 			
 			super.dispose()
 		}
+		
+		/**
+		 * @inheritDoc 
+		 */
+		public function sync(name:String, ...otherFutures):Future
+		{
+			return new SyncedFuture(name, futuresToSync.concat(otherFutures))
+		}
 	}
 }
