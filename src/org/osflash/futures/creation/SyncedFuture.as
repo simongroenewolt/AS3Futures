@@ -49,7 +49,10 @@ package org.osflash.futures.creation
 			applyArgs(super.complete, args)
 			
 			forEachChildFuture(function (childFuture:Future):void {
-				applyArgs(childFuture.complete, args)
+				if (childFuture.isPast == false)
+				{
+					applyArgs(childFuture.complete, args)
+				}
 			})
 		}
 		
