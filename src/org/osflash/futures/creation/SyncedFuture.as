@@ -1,7 +1,8 @@
 package org.osflash.futures.creation
 {
+	import org.osflash.functional.applyArgs;
 	import org.osflash.futures.support.assertFutureIsAlive;
-
+	
 	/**
 	 * When two or more Futures needs to synchonise in time this is the class that manages that
 	 * if all children succeed before listeners attach
@@ -12,15 +13,15 @@ package org.osflash.futures.creation
 		protected var
 			argsTotal:Array = [],
 			completesReceived:int = 0
-				
+		
 		protected const
 			futuresToSync:Array = []
-				
+		
 		public function SyncedFuture(name:String, syncThese:Array)
 		{
 			super(name)
 			var i:int=0
-				
+			
 			// we want to store the future in an 2-tuple object so we can easily associate arguments that come in from complete callback later
 			for (; i<syncThese.length; ++i)
 			{
@@ -38,26 +39,34 @@ package org.osflash.futures.creation
 				childFuture.internal::afterComplete(buildOnChildComplete(childFuture))
 				
 				childFuture.internal::afterCancel(function (...argsFromChild):void {
-					cancelThis(childFuture, argsFromChild)
+					applyArgs(cancel, argsFromChild)
 				})
 			})
 		}
 		
-		protected function cancelThis(futureThatCancelled:Future, args:Array):void
+		override public function complete(...args):void
 		{
+			applyArgs(super.complete, args)
+			
+			forEachChildFuture(function (childFuture:Future):void {
+				applyArgs(childFuture.complete, args)
+			})
+		}
+		
+		override public function cancel(...args):void
+		{ 
 			if(cancelling == false)
 			{
-				cancelling = true
+				applyArgs(super.cancel, args)
+				
 				forEachChildFuture(function (childFuture:Future):void {
 					
 					// only cancel a child future if it is not the child that just cancelled
-					if (childFuture != futureThatCancelled && childFuture.isPast == false)
+					if (childFuture.isPast == false)
 					{
-						childFuture.cancel.apply(null, args)
+						applyArgs(childFuture.cancel, args)
 					}
 				})
-			
-				cancel.apply(null, args)
 			}
 		}
 		
@@ -66,7 +75,7 @@ package org.osflash.futures.creation
 			return function (...args):void {
 				completesReceived++
 					
-				saveArgs(childFuture, args)
+					saveArgs(childFuture, args)
 				
 				if (completesReceived == futuresToSync.length)
 				{
@@ -111,7 +120,7 @@ package org.osflash.futures.creation
 					f(childFuture)
 				}
 			}
-			// if function has two arguments then pass in the future and it's saved args
+				// if function has two arguments then pass in the future and it's saved args
 			else if (f.length == 2)
 			{
 				for (i=0; i<futuresToSync.length; ++i)
@@ -133,14 +142,6 @@ package org.osflash.futures.creation
 			}
 			
 			super.dispose()
-		}
-		
-		/**
-		 * @inheritDoc 
-		 */
-		public function sync(name:String, ...otherFutures):Future
-		{
-			return new SyncedFuture(name, futuresToSync.concat(otherFutures))
 		}
 	}
 }
