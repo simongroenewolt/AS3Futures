@@ -18,7 +18,10 @@ package org.osflash.futures.creation
 			_duration = duration
 			t = new Timer(duration, 1)
 			this.callback = callback
-			t.addEventListener(TimerEvent.TIMER, callback)
+			t.addEventListener(TimerEvent.TIMER, function (e:TimerEvent):void {
+				// the timer seems to not stop sometimes
+				if (!_isPast)	callback(e)
+			})
 			t.start()
 		}
 		
