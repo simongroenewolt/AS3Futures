@@ -17,9 +17,8 @@ package org.osflash.futures.creation
 		protected const
 			futuresToSync:Array = []
 		
-		public function SyncedFuture(name:String, syncThese:Array)
+		public function SyncedFuture(syncThese:Array)
 		{
-			super(name)
 			var i:int=0
 			
 			// we want to store the future in an 2-tuple object so we can easily associate arguments that come in from complete callback later
@@ -36,9 +35,9 @@ package org.osflash.futures.creation
 			forEachChildFuture(function (childFuture:Future):void {
 				assertFutureIsAlive(childFuture, 'Caught attempt to sync with a dead future')
 				
-				childFuture.internal::afterComplete(buildOnChildComplete(childFuture))
+				childFuture.admin::afterComplete(buildOnChildComplete(childFuture))
 				
-				childFuture.internal::afterCancel(function (...argsFromChild):void {
+				childFuture.admin::afterCancel(function (...argsFromChild):void {
 					applyArgs(cancel, argsFromChild)
 				})
 			})

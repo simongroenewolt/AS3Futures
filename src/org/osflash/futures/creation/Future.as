@@ -9,21 +9,20 @@ package org.osflash.futures.creation
 	{
 		protected var
 			_name:String, // for debugging
-		
-			_onComplete:Function,
-			_afterComplete:Function,
-			_mapComplete:Object,
-			completing:Boolean,
+			_onComplete:Function,		// called when the future is completed, with the arguments supplied by the consumer
+			_afterComplete:Function,	// called after the future is completed, with the arguments supplied by the consumer
+			_mapComplete:Object,		// called if set, to convert the arguments given during the Future completion into another form
+			completing:Boolean,			// true if the Future is currently in the process of completing (used to avoid recursive completing)
 			
-			_onCancel:Function,
-			_afterCancel:Function,
-			_mapCancel:Object,
-			_mapCancelToComplete:Object,
-			cancelling:Boolean,
+			_onCancel:Function,			// called when the future is cancelled, with the arguments supplied by the consumer
+			_afterCancel:Function,		// called after the future is cancelled, with the arguments supplied by the consumer
+			_mapCancel:Object,			// called if set, to convert the arguments given during the Future cancellation into another form
+			_mapCancelToComplete:Object,// called if set, to convert the arguments given during the Future cancellation into another form
+			cancelling:Boolean,			// true if the Future is currently in the process of cancelling (used to avoid recursive cancelling)
 			
-			_onProgress:Function,
-			_afterProgress:Function,
-			_isPast:Boolean, // true if the future has already happened (ended with either completed or cancel)
+			_onProgress:Function,		// called on every progress update with at least a unit range argument
+			_afterProgress:Function,	// called after every progress update with at least a unit range argument
+			_isPast:Boolean, 			// true if the future has already happened (ended with either completed or cancel)
 			
 			// I listen to the proxy
 			proxyAnd:FutureProxy,
@@ -34,10 +33,15 @@ package org.osflash.futures.creation
 			
 			standardErrorMessage:String
 			
-		public function Future(name:String)
+		public function Future()
 		{
-			_name = name
 			standardErrorMessage = errorMessage()
+		}
+		
+		public function setName(value:String):IFuture
+		{
+			_name = value
+			return this
 		}
 		
 		public function get name():String
@@ -78,12 +82,13 @@ package org.osflash.futures.creation
 		public function isolate():IFuture
 		{
 			assertAll(isolator, 'is already isolated')
-			isolator = new Future(_name+'-isolated')
+			isolator = new Future()
+			isolator._name = _name+'-isolated'
 				
 //			isolator.afterComplete(complete)
 //			isolator.afterCancel(cancel)
-			afterComplete(isolator.complete)
-			afterCancel(isolator.cancel)
+			admin::afterComplete(isolator.complete)
+			admin::afterCancel(isolator.cancel)
 				
 			return isolator
 		}
@@ -106,6 +111,15 @@ package org.osflash.futures.creation
 			return _onProgress != null;
 		}
 		
+		public function get hasIsolatedProgressListener():Boolean
+		{
+			return (
+				isolator != null
+				&&
+				isolator.hasProgressListener
+			)
+		}
+		
 		public function progress(unit:Number, ...args):void
 		{
 			assertThisFutureIsAlive()
@@ -113,7 +127,7 @@ package org.osflash.futures.creation
 			if (_onProgress != null)
 			{
 				args.unshift(unit)
-				applyArgs(_onProgress, args, standardErrorMessage)
+				applyArgs(_onProgress, args)
 			}
 		}
 		
@@ -127,7 +141,7 @@ package org.osflash.futures.creation
 			return this;
 		}
 		
-		internal function afterComplete(f:Function):void
+		admin function afterComplete(f:Function):void
 		{
 			assertNotNull(_afterComplete, 'is already handling afterComplete ')
 			_afterComplete = f
@@ -141,6 +155,15 @@ package org.osflash.futures.creation
 			return _onComplete != null
 		}
 		
+		public function get hasIsolatedCompleteListener():Boolean
+		{
+			return (
+				isolator != null
+				&&
+				isolator.hasCompleteListener
+			)
+		}
+		
 		/**
 		 * @inheritDoc
 		 */
@@ -151,10 +174,6 @@ package org.osflash.futures.creation
 				return
 			
 			assertThisFutureIsAlive()
-			
-			if (proxyAnd != null && proxyAnd.hasFuture)
-				throw new Error('Future:'+_name+' is already defered to an andThen proxy')
-			
 			completeItern(args)
 		}
 		
@@ -179,8 +198,8 @@ package org.osflash.futures.creation
 			{
 				completing = true
 				_isPast = true
-				applyArgsIfExists(_onComplete, args, standardErrorMessage)
-				applyArgsIfExists(_afterComplete, args, standardErrorMessage)
+				applyArgsIfExists(_onComplete, args)
+				applyArgsIfExists(_afterComplete, args)
 				dispose()
 			}
 		}
@@ -204,7 +223,7 @@ package org.osflash.futures.creation
 		
 		protected function createProxyFuture(proxy:FutureProxy, args:Array):IFuture
 		{
-			const proxyFuture:Future = applyArgs(proxy.futureGenerator, args, standardErrorMessage)
+			const proxyFuture:Future = applyArgs(proxy.futureGenerator, args)
 			proxy.future = proxyFuture
 			assertFutureIsAlive(proxyFuture)
 			listenToProxyFuture(proxyFuture)
@@ -213,8 +232,8 @@ package org.osflash.futures.creation
 		
 		protected function listenToProxyFuture(proxyFuture:Future):void 
 		{
-			proxyFuture.afterComplete(completeIternAndNotifyListeners)
-			proxyFuture.afterCancel(cancelIternAndNotifyListeners)
+			proxyFuture.admin::afterComplete(completeIternAndNotifyListeners)
+			proxyFuture.admin::afterCancel(cancelIternAndNotifyListeners)
 		}
 		
 		protected function completeIternAndNotifyListeners(...args):void 
@@ -237,7 +256,7 @@ package org.osflash.futures.creation
 			return this;
 		}
 		
-		internal function afterCancel(f:Function):void
+		admin function afterCancel(f:Function):void
 		{
 			assertNotNull(_afterCancel, 'is already handling afterCancel')
 			_afterCancel = f
@@ -253,6 +272,15 @@ package org.osflash.futures.creation
 				||
 				_mapCancelToComplete != null
 				||
+				hasIsolatedCancelListener
+			)
+		}
+		
+		public function get hasIsolatedCancelListener():Boolean
+		{
+			return (
+				isolator != null
+				&&
 				isolator.hasCancelListener
 			)
 		}
@@ -289,7 +317,7 @@ package org.osflash.futures.creation
 			else if (_mapCancelToComplete != null)
 			{
 				args = map(_mapCancelToComplete, args)
-				applyArgs(complete, args, standardErrorMessage)
+				applyArgs(complete, args)
 				return
 			}
 			
@@ -302,8 +330,8 @@ package org.osflash.futures.creation
 			{
 				cancelling = true
 				_isPast = true
-				applyArgsIfExists(_onCancel, args, standardErrorMessage)
-				applyArgsIfExists(_afterCancel, args, standardErrorMessage)
+				applyArgsIfExists(_onCancel, args)
+				applyArgsIfExists(_afterCancel, args)
 				dispose()
 			}
 		}
@@ -331,10 +359,10 @@ package org.osflash.futures.creation
 			return this
 		}
 		
-		public function waitOnCritical(name:String, ...otherFutures):IFuture
+		public function waitOnCritical(...otherFutures):IFuture
 		{
 			otherFutures.unshift(this)
-			return new SyncedFuture(name, otherFutures)
+			return new SyncedFuture(otherFutures)
 		}
 		
 		protected function assertAll(property:*, message:String):void

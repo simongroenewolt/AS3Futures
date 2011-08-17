@@ -13,19 +13,13 @@ package org.osflash.futures.creation
 			callback:Function,
 			_duration:int
 			
-		public function TimedFuture(name:String, duration:int, args:Array)
+		public function TimedFuture(duration:int, args:Array, callback:Function)
 		{
-			super(name)
 			_duration = duration
 			t = new Timer(duration, 1)
-			callback = buildCallback(duration, args)
+			this.callback = callback
 			t.addEventListener(TimerEvent.TIMER, callback)
 			t.start()
-		}
-		
-		protected function buildCallback(duration:int, args:Array):Function
-		{
-			return null
 		}
 		
 		override public function dispose():void
@@ -51,7 +45,7 @@ package org.osflash.futures.creation
 		override public function cancel(...args):void
 		{
 			stopTimer()
-			applyArgs(super.cancel, args, standardErrorMessage)
+			applyArgs(super.cancel, args)
 		}
 	}
 }

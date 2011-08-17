@@ -7,6 +7,12 @@ package org.osflash.futures
 	 */	
 	public interface IFuture
 	{
+		/**
+		 * Give this future a name for debugging purposes
+		 * @param value the name to give this Future
+		 * @return the future so that other properties can be chained together
+		 */		
+		function setName(value:String):IFuture
 		function get name():String
 			
 		/**
@@ -34,7 +40,9 @@ package org.osflash.futures
 		/**
 		 * @return true if their is at least one listener for progress events 
 		 */			
-		function get hasProgressListener():Boolean	
+		function get hasProgressListener():Boolean
+			
+		function get hasIsolatedProgressListener():Boolean
 			
 		/**
 		 * update all listening functions of the progress of this future
@@ -52,6 +60,8 @@ package org.osflash.futures
 		 * @return true if their is at least one listener for completed events 
 		 */			
 		function get hasCompleteListener():Boolean
+			
+		function get hasIsolatedCompleteListener():Boolean
 			
 		/**
 		 * Complete this Future
@@ -77,6 +87,8 @@ package org.osflash.futures
 		 * @return true if their is at least one listener for cancelled 
 		 */			
 		function get hasCancelListener():Boolean
+			
+		function get hasIsolatedCancelListener():Boolean
 			
 		/**
 		 * Cancel this Future
@@ -124,7 +136,7 @@ package org.osflash.futures
 		 * @param otherFutures the other Futures to wait on
 		 * @return the compound Future that represents a group of Futures
 		 */			
-		function waitOnCritical(name:String, ...otherFutures):IFuture
+		function waitOnCritical(...otherFutures):IFuture
 		
 		function dispose():void
 	}

@@ -6,17 +6,22 @@ package org.osflash.futures.creation
 	
 	public class TimedFutureSuccess extends TimedFuture
 	{
-		public function TimedFutureSuccess(name:String, duration:int, args:Array)
+		public function TimedFutureSuccess(duration:int, args:Array)
 		{
-			super(name, duration, args)
-		}
-		
-		override protected function buildCallback(duration:int, args:Array):Function
-		{
-			return function (e:TimerEvent):void {
+			var errorFromCallingScope:Error = new Error()
+			
+			super(duration, args, function (e:TimerEvent):void {
 				t.removeEventListener(e.type, arguments.callee)
-				complete.apply(null, args)
-			}
+				try
+				{
+					complete.apply(null, args)
+				}
+				catch(err:Error)
+				{
+					errorFromCallingScope.message = err.message
+					throw errorFromCallingScope
+				}
+			})
 		}
 	}
 }
