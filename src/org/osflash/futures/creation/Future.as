@@ -361,8 +361,15 @@ package org.osflash.futures.creation
 		
 		public function waitOnCritical(...otherFutures):IFuture
 		{
-			otherFutures.unshift(this)
-			return new SyncedFuture(otherFutures)
+			if (otherFutures.length == 0)
+			{
+				return instantSuccess()
+			}
+			else
+			{
+				otherFutures.unshift(this)
+				return new SyncedFuture(otherFutures)
+			}
 		}
 		
 		protected function assertAll(property:*, message:String):void
