@@ -11,15 +11,28 @@ package {
     import org.osflash.futures.creation.timedSuccess;
     import org.osflash.futures.creation.waitOnCritical;
     import org.osflash.futures.support.isolate;
+    import org.osflash.futures.support.successChain;
 
-    public class AS3Futures extends Sprite {
-
-        public function AS3Futures() {
-			
+    public class AS3Futures extends Sprite 
+	{
+        public function AS3Futures() 
+		{
 			const argA:String = 'argA'
 			const argB:String = 'argB'
 			const argC:String = 'argC'
-				
+			
+			successChain(
+				timedSuccess(1000, 'argA'),
+				timedFail(2000, 'argB'),
+				timedSuccess(3000, 'argC')
+			)
+			.onComplete(function (...args):void {
+				trace('complete:', args)
+			})
+			.onCancel(function (...args):void {
+				trace('cancel:', args)
+			})
+			
 //			const futureA : IFuture = new FutureTest()	
 				
 //			const futureA : IFuture = new Future(argA)
@@ -38,7 +51,7 @@ package {
 //			const futureB:IFuture = instantFail(argB, argB)
 //			const futureC:IFuture = instantSuccess(argC, argC)
 			
-			producer()
+//			producer()
 				
 			// producer
 //			futureA
