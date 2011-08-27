@@ -344,7 +344,8 @@ package org.osflash.futures.creation
 		public function mapCancel(funcOrObject:Object):IFuture
 		{
 			assertNotNull(_mapCancel, 'is already handling mapCancel')
-			return null;
+			_mapCancel = funcOrObject
+			return this;
 		}
 		
 		public function orThen(futureGenerator:Function):IFuture

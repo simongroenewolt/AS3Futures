@@ -21,17 +21,17 @@ package {
 			const argB:String = 'argB'
 			const argC:String = 'argC'
 			
-			successChain(
-				timedSuccess(1000, 'argA'),
-				timedFail(2000, 'argB'),
-				timedSuccess(3000, 'argC')
-			)
-			.onComplete(function (...args):void {
-				trace('complete:', args)
-			})
-			.onCancel(function (...args):void {
-				trace('cancel:', args)
-			})
+//			successChain(
+//				timedSuccess(1000, 'argA'),
+//				timedFail(2000, 'argB'),
+//				timedSuccess(3000, 'argC')
+//			)
+//			.onComplete(function (...args):void {
+//				trace('complete:', args)
+//			})
+//			.onCancel(function (...args):void {
+//				trace('cancel:', args)
+//			})
 			
 //			const futureA : IFuture = new FutureTest()	
 				
@@ -45,6 +45,14 @@ package {
 				
 //			const futureA:IFuture = timedFail(200, argA)
 			const futureB:IFuture = timedFail(200, argB)
+			futureB.mapCancel(function (arg:String):String {
+				return arg + arg
+			})
+				
+			futureB.onCancel(function (result:String):void {
+				trace('result:', result)
+			})		
+				
 //			const futureC:IFuture = timedFail(200, argC)
 				
 //			const futureA:IFuture = instantFail(argA, argA)
