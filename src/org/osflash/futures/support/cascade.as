@@ -3,7 +3,7 @@ package org.osflash.futures.support
 	import org.osflash.futures.IFuture;
 	import org.osflash.futures.creation.instantSuccess;
 
-	public function successChain(...items):IFuture
+	public function cascade(...items):IFuture
 	{
 		if (items.length == 0)
 			return instantSuccess()

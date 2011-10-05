@@ -11,7 +11,7 @@ package {
     import org.osflash.futures.creation.timedSuccess;
     import org.osflash.futures.creation.waitOnCritical;
     import org.osflash.futures.support.isolate;
-    import org.osflash.futures.support.successChain;
+    import org.osflash.futures.support.cascade;
 
     public class AS3Futures extends Sprite 
 	{
